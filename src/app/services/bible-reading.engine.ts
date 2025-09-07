@@ -35,4 +35,10 @@ export class BibleReadingEngine {
       this.$currentDate.set(DateTime.now());
     }, 100);
   }
+
+  bibleReadingLinkURL(reading: any) {
+    const bookId = reading.bookId;
+    const chapter = reading.fromChapter;
+    return `https://wol.jw.org/en/wol/b/r1/lp-e/nwtsty/${bookId}/${chapter}`;
+  }
 }

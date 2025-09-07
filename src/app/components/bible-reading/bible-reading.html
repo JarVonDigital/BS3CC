@@ -1,7 +1,11 @@
 @let reading = bibleReadingEngine.$currentReading();
 @let weeklyReading = bibleReadingEngine.$weeklyReadingSchedule();
 <p-card [header]="$header()" subheader="{{reading?.date?.toISODate() | date: 'MMM d, y'}}">
-  <h4>{{reading?.reading}}</h4>
+  @for (chapter of reading?.reading; track $index) {
+    <a [href]="bibleReadingEngine.bibleReadingLinkURL(chapter)" target="_blank">
+      <h4>{{BibleReadingSchedule.books[chapter.bookId - 1].abbr}} {{chapter.fromChapter}} - {{chapter.toChapter}}</h4>
+    </a>
+  }
 </p-card>
 
 <div class="week-overview">
@@ -10,7 +14,11 @@
 
   @for(reading of weeklyReading; track reading.date) {
     <p-card header="{{reading.date.toISODate() | date: 'MMM d, y'}}" [style]="{'width':'40vw'}">
-      <h4>{{reading.reading}}</h4>
+      @for (chapter of reading.reading; track $index) {
+        <a [href]="bibleReadingEngine.bibleReadingLinkURL(chapter)" target="_blank">
+          <h4>{{BibleReadingSchedule.books[chapter.bookId - 1].abbr}} {{chapter.fromChapter}} - {{chapter.toChapter}}</h4>
+        </a>
+      }
     </p-card>
   }
 

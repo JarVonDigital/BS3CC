@@ -1,15 +1,17 @@
 import {Component, computed, inject} from '@angular/core';
 import {Card} from 'primeng/card';
 import {BibleReadingEngine} from '../../services/bible-reading.engine';
-import {DatePipe} from '@angular/common';
+import {DatePipe, JsonPipe} from '@angular/common';
 import {Button} from 'primeng/button';
+import {BibleReadingSchedule} from '../../data/br.schedule.data';
 
 @Component({
   selector: 'app-bible-reading',
   imports: [
     Card,
     DatePipe,
-    Button
+    Button,
+    JsonPipe
   ],
   templateUrl: './bible-reading.html',
   styleUrl: './bible-reading.scss'
@@ -26,4 +28,5 @@ export class BibleReading {
     if(current >= start) {return `$${current} | ${header}`}
     return header;
   })
+  protected readonly BibleReadingSchedule = BibleReadingSchedule;
 }

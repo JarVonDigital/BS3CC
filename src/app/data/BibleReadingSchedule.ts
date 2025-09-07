@@ -1,8 +1,8 @@
-export const BibleReadingSchedule = {
+export const BRS = {
   "v": 3,
   "tz": "America/New_York",
   "start": "2025-09-08",
-  "linkTemplate": "https://wol.jw.org/en/wol/b/r1/lp-e/nwtsty/{bookId}/{chapter}",
+  "linkTemplate": "https://wol.jw.org/en/wol/b/r1/lp-e/nwtsty/{bookId}/{chapter}#study=discover&v={bookId}:{chapter}:1",
   "books": [
     {
       "id": 1,
