@@ -1,0 +1,25 @@
+<ng-container [formGroup]="userLoginForm">
+  <p-input-group>
+    <p-inputgroup-addon>
+      <i class="pi pi-at"></i>
+    </p-inputgroup-addon>
+
+    <p-float-label variant="in">
+      <input pInputText placeholder="email" type="email" formControlName="email">
+      <label>Email</label>
+    </p-float-label>
+
+  </p-input-group>
+
+  <p-input-group>
+    <p-inputgroup-addon>
+      <i class="pi pi-lock"></i>
+    </p-inputgroup-addon>
+    <p-float-label variant="in">
+      <input pInputText placeholder="password" type="password" formControlName="password">
+      <label>Password</label>
+    </p-float-label>
+  </p-input-group>
+
+  <p-button fluid (onClick)="onLogin()">Login</p-button>
+</ng-container>

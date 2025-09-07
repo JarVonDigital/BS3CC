@@ -1,0 +1,22 @@
+<p-card header="{{$header () ?? ($reading().date.toISODate() | date: 'MMM d, y')}}">
+
+  <div class="readings">
+    @for (chapter of $reading().reading; track $index) {
+      <a [href]="bibleReadingEngine.bibleReadingLinkURL(chapter)" target="_blank">
+        <h4>{{BibleReadingSchedule.books[chapter.bookId - 1].abbr}} {{chapter.fromChapter}} - {{chapter.toChapter}}</h4>
+      </a>
+    }
+  </div>
+
+
+  @if(userEngine.$isLoggedIn()) {
+    <p-progress-bar [value]="0" />
+
+    <ng-template #footer>
+      <p-avatar-group>
+        <p-avatar label="D" shape="circle"></p-avatar>
+      </p-avatar-group>
+    </ng-template>
+  }
+
+</p-card>

@@ -1,13 +1,2 @@
-<p-menubar class="menu" [model]="menuItems" >
-  <ng-template #start>
-    <h2 class="title">
-      BS3CC
-    </h2>
-  </ng-template>
-
-  <ng-template #end>
-    <h4 class="date-time">{{bibleReadingEngine.$currentDate().toJSDate() | date: 'MMM, d, y h:mm'}}</h4>
-  </ng-template>
-</p-menubar>
-
+<app-navigation></app-navigation>
 <router-outlet></router-outlet>

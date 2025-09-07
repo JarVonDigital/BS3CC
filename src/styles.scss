@@ -8,3 +8,11 @@
 html {
   font-family: "TASA Explorer", sans-serif;
 }
+
+body {
+  .flex {
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+  }
+}

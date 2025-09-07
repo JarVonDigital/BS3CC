@@ -1,17 +1,30 @@
 :host {
-  p-card {
-    margin: .2rem 0;
 
-    a {
-      color: inherit;
-    }
+  ::ng-deep {
+    p-card {
+      margin: .2rem 0;
 
-    h4 {
-      border-top: 1px solid var(--p-primary-50);
-      padding: 1rem 0 0 0;
-      margin: 0;
+      .readings {
+        display: flex;
+        a {
+          color: inherit;
+        }
+
+        h4 {
+          border-top: 1px solid var(--p-primary-50);
+          padding: 1rem 0 0 0;
+          margin: 0;
+        }
+      }
+
+
+
+      p-progress-bar {
+        margin: 1rem 0 0 0;
+      }
     }
   }
+
 
   .week-overview {
     display: flex;
@@ -21,13 +34,16 @@
     gap: 1rem;
     margin: 1rem 0;
 
-    p-button {
-      position: sticky;
-      left: 0;
-    }
+    ::ng-deep {
+      p-button {
+        position: sticky;
+        left: 0;
+        margin: 0 1rem;
+      }
 
-    p-card {
-      min-width: 70vw;
+      p-card {
+        min-width: 65vw;
+      }
     }
   }
 }
