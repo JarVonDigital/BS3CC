@@ -1,0 +1,19 @@
+@let reading = bibleReadingEngine.$currentReading();
+@let weeklyReading = bibleReadingEngine.$weeklyReadingSchedule();
+<p-card [header]="$header()" subheader="{{reading?.date?.toISODate() | date: 'MMM d, y'}}">
+  <h4>{{reading?.reading}}</h4>
+</p-card>
+
+<div class="week-overview">
+
+  <p-button size="small" rounded outlined icon="pi pi-arrow-right"></p-button>
+
+  @for(reading of weeklyReading; track reading.date) {
+    <p-card header="{{reading.date.toISODate() | date: 'MMM d, y'}}" [style]="{'width':'40vw'}">
+      <h4>{{reading.reading}}</h4>
+    </p-card>
+  }
+
+  <p-button size="small" rounded outlined icon="pi pi-arrow-left"></p-button>
+
+</div>

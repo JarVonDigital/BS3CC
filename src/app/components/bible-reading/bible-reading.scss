@@ -1,0 +1,29 @@
+:host {
+  p-card {
+    margin: .2rem 0;
+
+    h4 {
+      border-top: 1px solid var(--p-primary-50);
+      padding: 1rem 0 0 0;
+      margin: 0;
+    }
+  }
+
+  .week-overview {
+    display: flex;
+    align-items: center;
+    flex-wrap: nowrap;
+    overflow: auto;
+    gap: 1rem;
+    margin: 1rem 0;
+
+    p-button {
+      position: sticky;
+      left: 0;
+    }
+
+    p-card {
+      min-width: 70vw;
+    }
+  }
+}
