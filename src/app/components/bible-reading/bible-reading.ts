@@ -5,6 +5,7 @@ import {DatePipe, JsonPipe} from '@angular/common';
 import {Button} from 'primeng/button';
 import {BibleReadingSchedule} from '../../data/br.schedule.data';
 import {BibleReadingCard} from './bible-reading-card/bible-reading-card';
+import {UserProfile} from '../user-profile/user-profile';
 
 @Component({
   selector: 'app-bible-reading',
@@ -13,7 +14,8 @@ import {BibleReadingCard} from './bible-reading-card/bible-reading-card';
     DatePipe,
     Button,
     JsonPipe,
-    BibleReadingCard
+    BibleReadingCard,
+    UserProfile
   ],
   templateUrl: './bible-reading.html',
   styleUrl: './bible-reading.scss'

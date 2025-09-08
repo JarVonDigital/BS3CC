@@ -1,4 +1,4 @@
-import {effect, inject, Injectable, signal, WritableSignal} from '@angular/core';
+import {effect, inject, Injectable, Signal, signal, WritableSignal} from '@angular/core';
 import {
   Auth,
   signInWithEmailAndPassword,
@@ -19,7 +19,7 @@ export interface UserLoginForm {
 export class UserEngine {
 
   auth = inject(Auth)
-  $signedInUser = toSignal(from(user(this.auth)), {initialValue: null});
+  $signedInUser: Signal<User | null | undefined> = toSignal(from(user(this.auth)));
 
   isUserSignedIn() {
     return user(this.auth)

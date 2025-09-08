@@ -1,6 +1,6 @@
 <p-card header="{{$header () ?? ($reading().date.toISODate() | date: 'MMM d, y')}}">
   <div class="readings">
-    @for (chapter of $reading().readings; track $index) {
+    @for (chapter of $reading().reading; track $index) {
       @if(bibleReadingEngine.$bibleBooks().length > 0) {
         <a [href]="bibleReadingEngine.bibleReadingLinkURL(chapter)" target="_blank">
           <h4>{{bibleReadingEngine.$bibleBooks()[chapter.bookId - 1].abbr}} {{chapter.fromChapter}} - {{chapter.toChapter}}</h4>

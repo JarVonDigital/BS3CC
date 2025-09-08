@@ -1,4 +1,14 @@
-import {Component, effect, inject, input, InputSignal, signal, Signal, WritableSignal} from '@angular/core';
+import {
+  AfterContentInit,
+  Component,
+  effect,
+  inject,
+  input,
+  InputSignal,
+  signal,
+  Signal,
+  WritableSignal
+} from '@angular/core';
 import {Card} from 'primeng/card';
 import {BibleReadingSchedule} from '../../../data/br.schedule.data';
 import {ProgressBar} from 'primeng/progressbar';
@@ -29,7 +39,7 @@ import {toSignal} from '@angular/core/rxjs-interop';
   templateUrl: './bible-reading-card.html',
   styleUrl: './bible-reading-card.scss'
 })
-export class BibleReadingCard {
+export class BibleReadingCard implements AfterContentInit {
 
   $header: InputSignal<any> = input();
   $reading: InputSignal<BibleReadingRef> = input.required();
@@ -40,12 +50,12 @@ export class BibleReadingCard {
   protected readonly Math = Math;
 
   $progress: WritableSignal<BibleReadingProgressObject | null | undefined> = signal(null);
-  eff = effect(() => {
-    this.userEngine.isUserSignedIn();
+
+  ngAfterContentInit() {
     this.bibleReadingEngine.getProgress(this.$reading().scheduleId, 0, this.$reading().day)
       .subscribe(p => {
         this.$progress.set(p);
       })
-  })
+  }
 
 }

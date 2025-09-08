@@ -6,8 +6,8 @@ import {
   collection,
   doc, docData,
   Firestore,
-  getDoc,
-  getDocs,
+  getDoc, getDocFromServer,
+  getDocs, getDocsFromServer,
   orderBy,
   query,
   setDoc,
@@ -38,7 +38,7 @@ export interface BibleReadingRef {
   day: number
   date: DateTime
   scheduleId: number
-  readings: {
+  reading: {
     bookId: number
     fromChapter: number
     toChapter: number
@@ -66,8 +66,6 @@ export class BibleReadingEngine {
   $bibleReadingStartDate = signal(DateTime.fromISO('2025-09-08').startOf('day'));
 
   $bibleBooks: WritableSignal<BibleBooks[]> = signal([] as BibleBooks[]);
-
-  bb = effect(() => console.log(this.$bibleBooks()))
 
   $bibleReadingSchedules: WritableSignal<BibleReadingScheduleRef[]> = signal([]);
   $bibleReadingSchedule: Signal<BibleReadingRef[]> = computed(() => {
@@ -123,7 +121,8 @@ export class BibleReadingEngine {
   async getBibleBooks() {
     let q = query(this.bibleBooksCollection, orderBy('id', 'asc'))
     let data = await getDocs(q);
-    this.$bibleBooks.set(data?.docs.flatMap(d => d.data()) as BibleBooks[] ?? [] as BibleBooks[])
+    console.log(data.docs.map(d => d.data()))
+    this.$bibleBooks.set(data.docs.map(d => d.data() as BibleBooks))
   }
 
   getProgress(scheduleId: number, groupId: number, day: number) {
@@ -135,7 +134,7 @@ export class BibleReadingEngine {
       where('day', '==', day)
     )
 
-    return from(getDocs(q)).pipe(
+    return from(getDocsFromServer(q)).pipe(
       switchMap((docs) => {
         if (docs.empty) {
           return of({
@@ -154,22 +153,25 @@ export class BibleReadingEngine {
       this.bibleReadingProgress,
       where('scheduleId', '==', scheduleId),
       where('groupId', '==', groupId),
-      where('day', '==', day)
+      where('day', '==', day),
+      where('userId', '==', this.user.$signedInUser()?.uid)
     )
     const docs = await getDocs(q);
+
+    console.log(docs.docs.map(d => d.data()))
+    console.log(docs.empty)
 
     if (docs.empty) {
       if (this.user.$signedInUser()?.uid) {
         const progObj: BibleReadingProgressObject = {
-          userId: this.user.$signedInUser()!.uid,
           groupId,
           scheduleId,
           progress,
           day,
+          userId: this.user.$signedInUser()!.uid,
           readingCompleted: progress === "COMPLETE" ? DateTime.now().toISO() : "",
           readingStarted: progress === "READING" ? DateTime.now().toISO() : ""
         }
-
         await addDoc(this.bibleReadingProgress, progObj);
         return;
       }
@@ -178,7 +180,9 @@ export class BibleReadingEngine {
     let doc = docs.docs[0]
     let docData = doc.data() as BibleReadingProgressObject
     await setDoc(doc.ref, {
-      ...docData,
+      scheduleId,
+      groupId,
+      userId: this.user.$signedInUser()?.uid,
       day,
       progress,
       readingCompleted: progress === "COMPLETE" ? DateTime.now().toISO() : docData.readingCompleted,

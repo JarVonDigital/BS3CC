@@ -1,0 +1,12 @@
+:host {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 1rem;
+  margin: 1rem;
+
+  h2 {
+    font-size: .8rem;
+    margin: 0;
+  }
+}
