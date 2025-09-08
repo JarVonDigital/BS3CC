@@ -27,7 +27,7 @@ export class BibleReading {
     const current = this.bibleReadingEngine.$currentDate();
     const start = this.bibleReadingEngine.$bibleReadingStartDate()
     if(current <= start) {return `Upcoming ${header}`}
-    if(current >= start) {return `$${current} | ${header}`}
+    if(current >= start) {return `${current.toFormat('DD')} | ${header}`}
     return header;
   })
   protected readonly BibleReadingSchedule = BibleReadingSchedule;

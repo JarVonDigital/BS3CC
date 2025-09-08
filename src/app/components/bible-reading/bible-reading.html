@@ -1,6 +1,9 @@
 @let reading = bibleReadingEngine.$currentReading();
 @let weeklyReading = bibleReadingEngine.$weeklyReadingSchedule();
-<app-bible-reading-card [$header]="$header()" [$reading]="reading"></app-bible-reading-card>
+
+@if(reading) {
+  <app-bible-reading-card [$header]="$header()" [$reading]="reading"></app-bible-reading-card>
+}
 
 <div class="week-overview">
 

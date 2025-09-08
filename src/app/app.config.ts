@@ -8,15 +8,19 @@ import {provideAnimations} from '@angular/platform-browser/animations';
 import {environment} from '../environments/environment';
 import {initializeApp, provideFirebaseApp} from '@angular/fire/app';
 import {getAuth, provideAuth} from '@angular/fire/auth';
+import {getFirestore, provideFirestore} from '@angular/fire/firestore';
+import {LogLevel, setLogLevel} from '@angular/fire';
+
+setLogLevel(LogLevel.VERBOSE);
 
 export const appConfig: ApplicationConfig = {
   providers: [
     provideBrowserGlobalErrorListeners(),
-    provideZonelessChangeDetection(),
     provideRouter(routes),
     provideAnimations(),
     provideFirebaseApp(() => initializeApp(environment.firebaseConfig)),
     provideAuth(() => getAuth()),
+    provideFirestore(() => getFirestore()),
     providePrimeNG({
       theme: {
         preset: Aura,

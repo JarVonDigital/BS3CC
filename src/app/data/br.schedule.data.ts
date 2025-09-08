@@ -1,7 +1,6 @@
 export const BibleReadingSchedule = {
-  "v": 3,
+  "v": 0,
   "tz": "America/New_York",
-  "start": "2025-09-08",
   "linkTemplate": "https://wol.jw.org/en/wol/b/r1/lp-e/nwtsty/{bookId}/{chapter}",
   "books": [
     {

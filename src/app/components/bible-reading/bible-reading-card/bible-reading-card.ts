@@ -3,7 +3,7 @@ import {Card} from 'primeng/card';
 import {BibleReadingSchedule} from '../../../data/br.schedule.data';
 import {ProgressBar} from 'primeng/progressbar';
 import {BibleReadingEngine} from '../../../services/bible-reading.engine';
-import {DatePipe} from '@angular/common';
+import {DatePipe, JsonPipe} from '@angular/common';
 import {AvatarGroup} from 'primeng/avatargroup';
 import {Avatar} from 'primeng/avatar';
 import {UserEngine} from '../../../services/user.engine';
@@ -15,7 +15,8 @@ import {UserEngine} from '../../../services/user.engine';
     ProgressBar,
     DatePipe,
     AvatarGroup,
-    Avatar
+    Avatar,
+    JsonPipe
   ],
   templateUrl: './bible-reading-card.html',
   styleUrl: './bible-reading-card.scss'

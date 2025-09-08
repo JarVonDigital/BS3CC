@@ -1,12 +1,10 @@
-import {inject, Injectable, signal, WritableSignal} from '@angular/core';
+import {effect, inject, Injectable, signal, WritableSignal} from '@angular/core';
 import {
   Auth,
   signInWithEmailAndPassword,
-  UserCredential,
   setPersistence,
-  browserLocalPersistence, user, signOut
+  browserLocalPersistence, user, signOut, User
 } from '@angular/fire/auth';
-import {toSignal} from '@angular/core/rxjs-interop';
 
 export interface UserLoginForm {
   email: string;
@@ -19,24 +17,22 @@ export interface UserLoginForm {
 export class UserEngine {
 
   private auth = inject(Auth)
-
-  $isLoggedIn = toSignal(user(this.auth));
-  $loggedInUser: WritableSignal<UserCredential | null> = signal(null);
+  $isLoggedIn: WritableSignal<User | undefined | null> = signal(null);
 
   constructor() {
-
+    user(this.auth).subscribe(u => {
+      console.log(u)
+      this.$isLoggedIn.set(u)
+    })
   }
 
   async loginWithEmailAndPassword({email, password}: UserLoginForm) {
     try {
       await setPersistence(this.auth, browserLocalPersistence);
-      const login = await signInWithEmailAndPassword(this.auth, email, password);
-      this.$loggedInUser.set(login)
-
+      await signInWithEmailAndPassword(this.auth, email, password);
     } catch (loginError) {
-      this.$loggedInUser.set(null)
+      console.log(loginError)
     }
-
   }
 
   async onLogout() {

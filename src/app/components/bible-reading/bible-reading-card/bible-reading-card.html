@@ -2,9 +2,11 @@
 
   <div class="readings">
     @for (chapter of $reading().reading; track $index) {
-      <a [href]="bibleReadingEngine.bibleReadingLinkURL(chapter)" target="_blank">
-        <h4>{{BibleReadingSchedule.books[chapter.bookId - 1].abbr}} {{chapter.fromChapter}} - {{chapter.toChapter}}</h4>
-      </a>
+      @if(bibleReadingEngine.$bibleBooks().length > 0) {
+        <a [href]="bibleReadingEngine.bibleReadingLinkURL(chapter)" target="_blank">
+          <h4>{{bibleReadingEngine.$bibleBooks()[chapter.bookId - 1].abbr}} {{chapter.fromChapter}} - {{chapter.toChapter}}</h4>
+        </a>
+      }
     }
   </div>
 
