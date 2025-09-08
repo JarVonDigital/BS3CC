@@ -6,5 +6,6 @@ export const routes: Routes = [
     title: "BS3CC | Create, organize, and stay consistent with your spiritual goals",
     path: '',
     component: BibleReading
+
   }
 ];

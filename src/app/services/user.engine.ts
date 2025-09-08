@@ -5,6 +5,8 @@ import {
   setPersistence,
   browserLocalPersistence, user, signOut, User
 } from '@angular/fire/auth';
+import {firstValueFrom, from} from 'rxjs';
+import {toSignal} from '@angular/core/rxjs-interop';
 
 export interface UserLoginForm {
   email: string;
@@ -16,14 +18,11 @@ export interface UserLoginForm {
 })
 export class UserEngine {
 
-  private auth = inject(Auth)
-  $isLoggedIn: WritableSignal<User | undefined | null> = signal(null);
+  auth = inject(Auth)
+  $signedInUser = toSignal(from(user(this.auth)), {initialValue: null});
 
-  constructor() {
-    user(this.auth).subscribe(u => {
-      console.log(u)
-      this.$isLoggedIn.set(u)
-    })
+  isUserSignedIn() {
+    return user(this.auth)
   }
 
   async loginWithEmailAndPassword({email, password}: UserLoginForm) {

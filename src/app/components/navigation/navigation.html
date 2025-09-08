@@ -8,8 +8,8 @@
   <ng-template #end>
     <div class="flex">
       <h4 class="date-time">{{bibleReadingEngine.$currentDate().toJSDate() | date: 'MMM, d, y h:mm'}}</h4>
-      @if(userEngine.$isLoggedIn()) {
-        <p-avatar shape="circle" [label]="userEngine.$isLoggedIn()?.email?.[0] ?? ''" (click)="popover.toggle($event)"></p-avatar>
+      @if(userEngine.$signedInUser()) {
+        <p-avatar shape="circle" [label]="userEngine.$signedInUser()?.email?.[0] ?? ''" (click)="popover.toggle($event)"></p-avatar>
         <p-popover #popover>
          <p-button fluid label="Logout" (onClick)="userEngine.onLogout()"></p-button>
         </p-popover>
