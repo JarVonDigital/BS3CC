@@ -1,6 +1,15 @@
 <p-avatar size="xlarge" icon="pi pi-user" shape="circle" ></p-avatar>
 <div class="details">
   <h2>{{user.$signedInUser()?.email}}</h2>
-  <h2>{{user.$signedInUser()?.uid}}</h2>
+  <h4>Joined: {{user.$signedInUser()?.metadata?.creationTime | date: 'MMM, d, y'}}</h4>
+
+  <p-divider></p-divider>
+
+  <p-avatar-group>
+    @for(user of $users(); track user.uid) {
+      <p-avatar label="{{user.email?.[0]}}" [pTooltip]="user.email ?? ''" shape="circle"></p-avatar>
+    }
+    <p-avatar [label]="$users()?.length?.toString() ?? '0'" shape="circle"></p-avatar>
+  </p-avatar-group>
 </div>
 
