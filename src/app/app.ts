@@ -5,10 +5,11 @@ import {MenuItem} from 'primeng/api';
 import {BibleReadingEngine} from './services/bible-reading.engine';
 import {DatePipe} from '@angular/common';
 import {Navigation} from './components/navigation/navigation';
+import {Footer} from './components/footer/footer';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, Menubar, DatePipe, Navigation],
+  imports: [RouterOutlet, Menubar, DatePipe, Navigation, Footer],
   templateUrl: './app.html',
   styleUrl: './app.scss'
 })

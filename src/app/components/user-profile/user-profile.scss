@@ -31,14 +31,19 @@
       }
     }
 
-    h2 {
-      font-size: .8rem;
-      margin: 0;
+    .details {
+      flex: 1;
+
+      h2 {
+        font-size: .8rem;
+        margin: 0;
+      }
+      h4 {
+        font-size: .6rem;
+        margin: 0;
+      }
     }
 
-    h4 {
-      font-size: .6rem;
-      margin: 0;
-    }
+
   }
 }

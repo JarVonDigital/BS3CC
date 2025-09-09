@@ -1,5 +1,5 @@
 @if(items().length != 0) {
-  <p-carousel [circular]="true" [value]="items()" [autoplayInterval]="7000" [numVisible]="1.5" [showNavigators]="false">
+  <p-carousel [value]="items()" [autoplayInterval]="7000" [numVisible]="1.5" [showNavigators]="false">
     <ng-template #item let-item>
       @let verse = item.chapter + ':' + item.verse + (item.throughVerse ? '-' + item.throughVerse : '');
       <p-card>
