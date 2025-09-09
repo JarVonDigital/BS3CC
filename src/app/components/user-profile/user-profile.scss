@@ -5,6 +5,14 @@
   gap: 1rem;
   margin: 1rem;
 
+  p-avatar {
+    ::ng-deep {
+      img {
+        object-fit: cover;
+      }
+    }
+  }
+
   .user-profile {
     position: relative;
 

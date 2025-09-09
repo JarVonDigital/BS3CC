@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import {Component, inject, signal} from '@angular/core';
 import { Avatar } from 'primeng/avatar';
 import { UserEngine } from '../../services/user.engine';
 import { AvatarGroup } from 'primeng/avatargroup';
@@ -7,7 +7,7 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { Divider } from 'primeng/divider';
 import { Tooltip } from 'primeng/tooltip';
 import { fromBlob } from 'image-resize-compress';
-import heic2any from 'heic2any';
+import {ProgressSpinner} from 'primeng/progressspinner';
 
 @Component({
   selector: 'app-user-profile',
@@ -17,6 +17,7 @@ import heic2any from 'heic2any';
     Divider,
     DatePipe,
     Tooltip,
+    ProgressSpinner,
   ],
   templateUrl: './user-profile.html',
   styleUrl: './user-profile.scss'
@@ -24,53 +25,22 @@ import heic2any from 'heic2any';
 export class UserProfile {
   user: UserEngine = inject(UserEngine);
   $users = toSignal(this.user.getUsers());
+  $isUpdatingAvatar = signal(false)
 
   async updateProfileImage() {
     const input = document.createElement('input');
     input.type = 'file';
-    input.accept = 'image/*';
+    input.accept = 'image/jpeg,image/png'; // ✅ restrict to JPG + PNG
     input.style.display = 'none';
 
     input.onchange = async () => {
       if (!input.files?.length) return;
+      this.$isUpdatingAvatar.set(true);
       let file = input.files[0];
 
       try {
-        // 🔹 Convert HEIC → JPEG only in Safari/iOS
-        if ((file.type === 'image/heic' || file.type === 'image/heif') && this.isSafari()) {
-          try {
-            const convertedBlob = (await heic2any({
-              blob: file,
-              toType: 'image/jpeg',
-              quality: 0.9
-            })) as Blob;
-
-            file = new File(
-              [convertedBlob],
-              file.name.replace(/\.[^/.]+$/, '.jpg'),
-              { type: 'image/jpeg' }
-            );
-          } catch (err) {
-            console.warn('HEIC conversion failed:', err);
-            alert('Could not convert HEIC image. Please try JPEG or PNG.');
-            return;
-          }
-        }
-
-        // ❌ Block HEIC in non-Safari browsers
-        if ((file.type === 'image/heic' || file.type === 'image/heif') && !this.isSafari()) {
-          alert('HEIC images are not supported in this browser. Please upload JPEG or PNG.');
-          return;
-        }
-
-        // 🔹 Resize image
-        let resizedBlob: Blob;
-        try {
-          resizedBlob = await fromBlob(file, 80, 'auto', 'auto', 'jpeg');
-        } catch (err) {
-          console.error('Image resize failed:', err);
-          return;
-        }
+        // 🔹 Resize (quality 80%, keep aspect ratio)
+        const resizedBlob = await fromBlob(file, 80, 'auto', 'auto', 'jpeg');
 
         // 🔹 Upload to Firebase Storage
         const photoURL = await this.user.uploadImage(
@@ -80,17 +50,14 @@ export class UserProfile {
 
         // 🔹 Update Firebase Auth profile
         await this.user.updateProfilePhoto({ photoURL });
+        this.$isUpdatingAvatar.set(false);
         console.log('✅ Profile photo updated:', photoURL);
-
       } catch (err) {
+        this.$isUpdatingAvatar.set(false);
         console.error('❌ Error uploading image:', err);
       }
     };
 
     input.click();
-  }
-
-  isSafari(): boolean {
-    return /safari/i.test(navigator.userAgent) && !/chrome|android/i.test(navigator.userAgent);
   }
 }

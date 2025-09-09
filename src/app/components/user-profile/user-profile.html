@@ -2,13 +2,22 @@
 
     <div class="user-profile">
       <i class="pi pi-camera"></i>
-      <p-avatar
-        size="xlarge"
-        shape="circle"
-        [icon]="user.$signedInUser()?.photoURL ? undefined : 'pi pi-user'"
-        [image]="user.$signedInUser()?.photoURL ?? undefined"
-        (click)="updateProfileImage()" >
-      </p-avatar>
+      @if($isUpdatingAvatar()) {
+        <p-avatar
+          size="xlarge"
+          shape="circle">
+          <p-progress-spinner></p-progress-spinner>
+        </p-avatar>
+      } @else {
+        <p-avatar
+          size="xlarge"
+          shape="circle"
+          [icon]="user.$signedInUser()?.photoURL ? undefined : 'pi pi-user'"
+          [image]="user.$signedInUser()?.photoURL ?? undefined"
+          (click)="updateProfileImage()" >
+        </p-avatar>
+      }
+
     </div>
 
 
@@ -24,7 +33,7 @@
           [label]="user.photoURL ? undefined : user.email?.[0]"
           [pTooltip]="user.email ?? undefined"
           [image]="user.photoURL ?? undefined"
-          [fitContent]="true"
+          [fitContent]="false"
           shape="circle"></p-avatar>
       }
       <p-avatar icon="pi pi-users" shape="circle"></p-avatar>
