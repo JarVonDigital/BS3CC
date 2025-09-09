@@ -47,13 +47,12 @@ import {AutoFocus} from 'primeng/autofocus';
     InputNumber,
     InputGroup,
     Textarea,
-    ReactiveFormsModule,
-    AutoFocus
+    ReactiveFormsModule
   ],
   templateUrl: './bible-reading-card.html',
   styleUrl: './bible-reading-card.scss'
 })
-export class BibleReadingCard implements AfterContentInit {
+export class BibleReadingCard {
 
   $header: InputSignal<any> = input();
   $reading: InputSignal<BibleReadingRef> = input.required();
@@ -62,10 +61,26 @@ export class BibleReadingCard implements AfterContentInit {
   protected readonly userEngine = inject(UserEngine)
   protected fb = inject(FormBuilder);
   protected readonly bibleReadingEngine = inject(BibleReadingEngine);
-  protected readonly BibleReadingSchedule = BibleReadingSchedule;
   protected readonly Math = Math;
 
+  $allProgress = toSignal(this.bibleReadingEngine.getProgress(), {initialValue: []})
   $progress: WritableSignal<BibleReadingProgressObject | null | undefined> = signal(null);
+
+  $setProgressEffect = effect(() => {
+    if(this.$allProgress().length > 0) {
+
+      // Get Progress
+      const progress = this.$allProgress().find(p => {
+        const day = p.day === this.$reading().day
+        const user = this.userEngine.$signedInUser()?.uid === p.userId
+        return day && user;
+      })
+
+      // Set/Update Progress
+      this.$progress.set(progress);
+
+    }
+  })
 
   gemSubmissionForm = this.fb.group({
     book: this.fb.control(0, {validators: [Validators.required]}),
@@ -74,13 +89,6 @@ export class BibleReadingCard implements AfterContentInit {
     throughVerse: 0,
     comment: this.fb.control("", {validators: [Validators.required]})
   })
-
-  ngAfterContentInit() {
-    this.bibleReadingEngine.getProgress(this.$reading().scheduleId, 0, this.$reading().day)
-      .subscribe(p => {
-        this.$progress.set(p);
-      })
-  }
 
   clearForm() {
     this.gemSubmissionForm.reset();

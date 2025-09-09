@@ -171,28 +171,16 @@ export class BibleReadingEngine {
 
   }
 
-  getProgress(scheduleId: number, groupId: number, day: number) {
+  getProgress(): Observable<BibleReadingProgressObject[]> {
     return runInInjectionContext(this.injector, () => {
       const q = query(
         this.bibleReadingProgress,
-        where('scheduleId', '==', scheduleId),
-        where('groupId', '==', groupId),
-        where('userId', '==', this.user.$signedInUser()?.uid ?? ''),
-        where('day', '==', day)
+        where('scheduleId', '==', 0),
+        where('groupId', '==', 0)
       )
 
-      return from(getDocsFromServer(q)).pipe(
-        switchMap((docs) => {
-          if (docs.empty) {
-            return of({
-              progress: "PREPARING",
-              readingStarted: "",
-              readingCompleted: ""
-            } as BibleReadingProgressObject);
-          }
-          return docData(docs.docs[0].ref) as Observable<BibleReadingProgressObject>;
-        })
-      );
+      return collectionData(q) as Observable<BibleReadingProgressObject[]>
+
     })
 
   }
@@ -219,8 +207,11 @@ export class BibleReadingEngine {
             readingCompleted: progress === "COMPLETE" ? DateTime.now().toISO() : "",
             readingStarted: progress === "READING" ? DateTime.now().toISO() : ""
           }
+          console.log('Adding New Doc')
           await addDoc(this.bibleReadingProgress, progObj);
           return;
+        } else {
+          console.log('Not Logged In')
         }
       }
 
