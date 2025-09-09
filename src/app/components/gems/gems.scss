@@ -1,16 +1,13 @@
 :host {
   p-carousel {
-    margin: 2rem 0 0 0;
+    margin: 1rem 0 0 0;
     ::ng-deep {
 
       p-card {
         height: calc(100% - 1rem);
         touch-action: unset;
         margin: 1rem 0;
-      }
-
-      .p-carousel-item-list {
-        gap: 1rem;
+        transform: scale(.9);
       }
     }
   }

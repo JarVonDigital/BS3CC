@@ -21,6 +21,7 @@ export class Gems {
   protected readonly userEngine = inject(UserEngine);
   protected readonly bibleReadingEngine = inject(BibleReadingEngine);
   items = toSignal(this.bibleReadingEngine.getGems(), {initialValue: []});
+  $users = toSignal(this.userEngine.getUsers(), {initialValue: []});
 
   getBook(item: any) {
     return this.bibleReadingEngine.$bibleBooks()
@@ -28,7 +29,6 @@ export class Gems {
   }
 
   async getUser(item: any) {
-    const users = await this.userEngine.getUsers();
-    return users.find((u) => u.uid === item.userId);
+    return this.$users().find((u) => u.uid === item.userId);
   }
 }

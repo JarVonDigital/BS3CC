@@ -10,11 +10,13 @@ import {
   Auth,
   signInWithEmailAndPassword,
   setPersistence,
-  browserLocalPersistence, user, signOut, User
+  browserLocalPersistence, user, signOut, User,
+  updateProfile
 } from '@angular/fire/auth';
-import {from} from 'rxjs';
+import {from, Observable} from 'rxjs';
 import {toSignal} from '@angular/core/rxjs-interop';
-import {collection, doc, Firestore, getDoc, getDocs, setDoc} from '@angular/fire/firestore';
+import {collection, collectionData, doc, Firestore, getDoc, getDocs, setDoc, updateDoc} from '@angular/fire/firestore';
+import {getDownloadURL, getStorage, ref, uploadBytes} from '@angular/fire/storage';
 
 export interface UserLoginForm {
   email: string;
@@ -52,11 +54,11 @@ export class UserEngine {
   updateUserDB = effect(async () => {
     await runInInjectionContext(this.injector, async () => {
       const user = this.$signedInUser();
-      if(!user) return;
+      if (!user) return;
 
       const docRef = doc(this.userCollection, user.uid);
       const docData = await getDoc(docRef);
-      if(!docData.exists()) {
+      if (!docData.exists()) {
         await setDoc(docRef, {
           uid: user.uid,
           email: user.email,
@@ -70,12 +72,17 @@ export class UserEngine {
     })
   })
 
-  async getUsers(): Promise<User[]> {
-    return await runInInjectionContext(this.injector, async () => {
-      let data = await getDocs(this.userCollection)
-      return data.docs.map(d => d.data() as User)
+  getUsers(): Observable<User[]> {
+    return runInInjectionContext(this.injector, () => {
+      return collectionData(this.userCollection, {idField: 'id'}) as Observable<User[]>
     })
 
+  }
+
+  async uploadImage(file: Blob | File, path: string): Promise<string> {
+    const storageRef = ref(getStorage(), path);
+    await uploadBytes(storageRef, file);
+    return await getDownloadURL(storageRef); // return public URL
   }
 
   async loginWithEmailAndPassword({email, password}: UserLoginForm) {
@@ -89,5 +96,18 @@ export class UserEngine {
 
   async onLogout() {
     await signOut(this.auth)
+  }
+
+  /**
+   * Updates the profile photo for the currently authenticated user.
+   *
+   * @param {Object} param - An object containing the parameters for updating the profile photo.
+   * @param {string} param.photoURL - The URL of the new profile photo.
+   * @return {Promise<void>} A promise that resolves when the profile photo has been successfully updated.
+   */
+  async updateProfilePhoto(param: { photoURL: string }): Promise<void> {
+    const docRef = doc(this.userCollection, this.$signedInUser()?.uid);
+    await updateProfile(this.auth.currentUser!, param);
+    await updateDoc(docRef, param)
   }
 }

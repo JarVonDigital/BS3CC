@@ -1,15 +1,36 @@
-<p-avatar size="xlarge" icon="pi pi-user" shape="circle" ></p-avatar>
-<div class="details">
-  <h2>{{user.$signedInUser()?.email}}</h2>
-  <h4>Joined: {{user.$signedInUser()?.metadata?.creationTime | date: 'MMM, d, y'}}</h4>
+@if(user.$signedInUser()) {
 
-  <p-divider></p-divider>
+    <div class="user-profile">
+      <i class="pi pi-camera"></i>
+      <p-avatar
+        size="xlarge"
+        shape="circle"
+        [icon]="user.$signedInUser()?.photoURL ? undefined : 'pi pi-user'"
+        [image]="user.$signedInUser()?.photoURL ?? undefined"
+        (click)="updateProfileImage()" >
+      </p-avatar>
+    </div>
 
-  <p-avatar-group>
-    @for(user of $users(); track user.uid) {
-      <p-avatar label="{{user.email?.[0]}}" [pTooltip]="user.email ?? ''" shape="circle"></p-avatar>
-    }
-    <p-avatar icon="pi pi-users" shape="circle"></p-avatar>
-  </p-avatar-group>
-</div>
+
+  <div class="details">
+    <h2>{{user.$signedInUser()?.email}}</h2>
+    <h4>Joined: {{user.$signedInUser()?.metadata?.creationTime | date: 'MMM, d, y'}}</h4>
+
+    <p-divider></p-divider>
+
+    <p-avatar-group>
+      @for(user of $users(); track user.uid) {
+        <p-avatar
+          [label]="user.photoURL ? undefined : user.email?.[0]"
+          [pTooltip]="user.email ?? undefined"
+          [image]="user.photoURL ?? undefined"
+          [fitContent]="true"
+          shape="circle"></p-avatar>
+      }
+      <p-avatar icon="pi pi-users" shape="circle"></p-avatar>
+    </p-avatar-group>
+  </div>
+}
+
+
 

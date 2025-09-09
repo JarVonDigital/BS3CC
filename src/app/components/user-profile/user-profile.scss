@@ -5,6 +5,19 @@
   gap: 1rem;
   margin: 1rem;
 
+  .user-profile {
+    position: relative;
+
+    i {
+      position: absolute;
+      bottom: 0;
+      right: 0;
+      padding: .3rem;
+      background: white;
+      border-radius: 100%;
+    }
+  }
+
   h2 {
     font-size: .8rem;
     margin: 0;
