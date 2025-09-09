@@ -62,7 +62,15 @@
             <p-input-number size="small" placeholder="Verse" formControlName="throughVerse"></p-input-number>
           </p-inputgroup>
 
-          <textarea pTextarea fluid autoResize [spellcheck]="true" [maxLength]="500" formControlName="comment"></textarea>
+          <textarea
+            pTextarea
+            fluid
+            autoResize
+            [spellcheck]="true"
+            [maxLength]="275"
+            formControlName="comment"></textarea>
+
+          <h4>{{gemSubmissionForm.getRawValue()?.comment?.length}} / 275 Characters</h4>
 
           <p-button
             [disabled]="gemSubmissionForm.invalid"

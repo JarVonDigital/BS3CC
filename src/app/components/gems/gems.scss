@@ -4,9 +4,9 @@
     ::ng-deep {
 
       p-card {
-        max-height: 9rem;
-        min-height: 9rem;
-        overflow: auto;
+        height: calc(100% - 1rem);
+        touch-action: unset;
+        margin: 1rem 0;
       }
 
       .p-carousel-item-list {
