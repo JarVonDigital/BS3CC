@@ -29,6 +29,7 @@ import {InputGroup} from 'primeng/inputgroup';
 import {Textarea} from 'primeng/textarea';
 import {FormBuilder, ReactiveFormsModule, Validators} from '@angular/forms';
 import {AutoFocus} from 'primeng/autofocus';
+import {Chip} from 'primeng/chip';
 
 @Component({
   selector: 'app-bible-reading-card',
@@ -47,7 +48,8 @@ import {AutoFocus} from 'primeng/autofocus';
     InputNumber,
     InputGroup,
     Textarea,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    Chip
   ],
   templateUrl: './bible-reading-card.html',
   styleUrl: './bible-reading-card.scss'

@@ -7,8 +7,12 @@
     @for (chapter of $reading().reading; track $index) {
       @if (bibleReadingEngine.$bibleBooks().length > 0) {
         <a [href]="bibleReadingEngine.bibleReadingLinkURL(chapter)" target="_blank">
-          <h4>{{ bibleReadingEngine.$bibleBooks()[chapter.bookId - 1].abbr }} {{ chapter.fromChapter }}
-            - {{ chapter.toChapter }}</h4>
+          @let passage = bibleReadingEngine.$bibleBooks()[chapter.bookId - 1].abbr +' '+ chapter.fromChapter +'-'+ chapter.toChapter;
+          <p-chip>
+            <i class="pi pi-book"></i>
+            {{passage}}
+            <i class="pi pi-link"></i>
+          </p-chip>
         </a>
       }
     }
