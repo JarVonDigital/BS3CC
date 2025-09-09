@@ -92,7 +92,7 @@ export class BibleReadingEngine {
   })
 
   $currentReading = computed(() => {
-    const daysFromStart = DateTime.now().diff(this.$bibleReadingStartDate()).toObject().days ?? 0;
+    const daysFromStart = Math.floor(DateTime.now().diff(this.$bibleReadingStartDate(), 'days').toObject().days ?? 0) ;
     if (this.$currentDate() <= this.$bibleReadingStartDate()) {
       return this.$bibleReadingSchedule()[0]
     }
