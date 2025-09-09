@@ -6,13 +6,14 @@ import {from} from 'rxjs';
 import {BibleReadingEngine} from '../../services/bible-reading.engine';
 import {UserEngine} from '../../services/user.engine';
 import {Button} from 'primeng/button';
-import {AsyncPipe} from '@angular/common';
+import {AsyncPipe, DatePipe} from '@angular/common';
 
 @Component({
   selector: 'app-gems',
   imports: [
     Carousel,
     Card,
+    DatePipe,
   ],
   templateUrl: './gems.html',
   styleUrl: './gems.scss'

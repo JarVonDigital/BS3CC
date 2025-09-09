@@ -25,7 +25,7 @@ import {
   where
 } from '@angular/fire/firestore';
 import {UserEngine} from './user.engine';
-import {from, Observable, of, switchMap} from 'rxjs';
+import {from, map, Observable, of, switchMap} from 'rxjs';
 
 export interface BibleReadingProgressObject {
   userId: string;
@@ -135,9 +135,13 @@ export class BibleReadingEngine {
     return runInInjectionContext(this.injector, () => {
       let q = query(
         this.gemsCollection,
-        where('groupId', '==', 0),
+        where('groupId', '==', 0)
       )
-      return collectionData(q, {idField: 'id'}) as Observable<any[]>;
+      return (collectionData(q, {idField: 'id'}) as Observable<any[]>)
+        .pipe(map(gems => gems
+          .sort((a,b) => {
+            return DateTime.fromISO(a.createdAt) < DateTime.fromISO(b.createdAt) ? 1 : -1;
+          })));
     })
   }
 

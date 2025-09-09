@@ -3,9 +3,10 @@
     <ng-template #item let-item>
       @let verse = item.chapter + ':' + item.verse + (item.throughVerse ? '-' + item.throughVerse : '');
       <p-card header="{{getBook(item)?.name}} {{verse}}">
-        {{item.comment}}
-        <ng-template #footer>
-        </ng-template>
+        <div class="comment">
+          <h4>Added: {{item.createdAt | date: 'short'}}</h4>
+          {{item.comment}}
+        </div>
       </p-card>
     </ng-template>
   </p-carousel>
