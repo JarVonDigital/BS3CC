@@ -1,7 +1,36 @@
 :host {
   top: 0;
   position: sticky;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 60px;
+  background: white;
+  border-bottom: 1px solid rgb(230, 230, 230);
   z-index: 1000;
+
+  .title {
+    font-family: "Fredoka", sans-serif;
+    margin: 0 1rem;
+    font-size: 1rem;
+    font-weight: bold;
+    letter-spacing: 1px;
+    color: rgb(60, 60, 60);
+  }
+
+  .right {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+
+    .date-time {
+      display: block;
+      margin: 0;
+      font-size: .7rem;
+      color: rgb(150, 150, 150);
+    }
+  }
+
   .menu {
     .title {
       font-family: "Fredoka", sans-serif;

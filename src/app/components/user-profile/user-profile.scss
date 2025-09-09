@@ -1,38 +1,44 @@
 :host {
   display: flex;
-  flex-direction: row;
-  align-items: center;
+  flex-direction: column;
   gap: 1rem;
   margin: 1rem;
 
-  p-avatar {
-    ::ng-deep {
-      img {
-        object-fit: cover;
+  .main {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+
+    .user-profile {
+      p-avatar {
+        ::ng-deep {
+          img {
+            object-fit: cover;
+          }
+        }
+      }
+
+      position: relative;
+
+      i {
+        position: absolute;
+        bottom: 0;
+        right: 0;
+        padding: .3rem;
+        background: white;
+        border-radius: 100%;
       }
     }
-  }
 
-  .user-profile {
-    position: relative;
-
-    i {
-      position: absolute;
-      bottom: 0;
-      right: 0;
-      padding: .3rem;
-      background: white;
-      border-radius: 100%;
+    h2 {
+      font-size: .8rem;
+      margin: 0;
     }
-  }
 
-  h2 {
-    font-size: .8rem;
-    margin: 0;
-  }
-
-  h4 {
-    font-size: .6rem;
-    margin: 0;
+    h4 {
+      font-size: .6rem;
+      margin: 0;
+    }
   }
 }

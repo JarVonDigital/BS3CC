@@ -1,8 +1,15 @@
-@if(user.$signedInUser()) {
+@if (user.$signedInUser()) {
 
+  <div class="messages">
+    <p-message size="small" severity="secondary">
+      Profile pictures must be in JPEG format.
+    </p-message>
+  </div>
+
+  <div class="main">
     <div class="user-profile">
       <i class="pi pi-camera"></i>
-      @if($isUpdatingAvatar()) {
+      @if ($isUpdatingAvatar()) {
         <p-avatar
           size="xlarge"
           shape="circle">
@@ -14,31 +21,31 @@
           shape="circle"
           [icon]="user.$signedInUser()?.photoURL ? undefined : 'pi pi-user'"
           [image]="user.$signedInUser()?.photoURL ?? undefined"
-          (click)="updateProfileImage()" >
+          (click)="updateProfileImage()">
         </p-avatar>
       }
 
     </div>
+    <div class="details">
+      <h2>{{ user.$signedInUser()?.email }}</h2>
+      <h4>Joined: {{ user.$signedInUser()?.metadata?.creationTime | date: 'MMM, d, y' }}</h4>
 
+      <p-divider></p-divider>
 
-  <div class="details">
-    <h2>{{user.$signedInUser()?.email}}</h2>
-    <h4>Joined: {{user.$signedInUser()?.metadata?.creationTime | date: 'MMM, d, y'}}</h4>
-
-    <p-divider></p-divider>
-
-    <p-avatar-group>
-      @for(user of $users(); track user.uid) {
-        <p-avatar
-          [label]="user.photoURL ? undefined : user.email?.[0]"
-          [pTooltip]="user.email ?? undefined"
-          [image]="user.photoURL ?? undefined"
-          [fitContent]="false"
-          shape="circle"></p-avatar>
-      }
-      <p-avatar icon="pi pi-users" shape="circle"></p-avatar>
-    </p-avatar-group>
+      <p-avatar-group>
+        @for (user of $users(); track user.uid) {
+          <p-avatar
+            [label]="user.photoURL ? undefined : user.email?.[0]"
+            [pTooltip]="user.email ?? undefined"
+            [image]="user.photoURL ?? undefined"
+            [fitContent]="false"
+            shape="circle"></p-avatar>
+        }
+        <p-avatar icon="pi pi-users" shape="circle"></p-avatar>
+      </p-avatar-group>
+    </div>
   </div>
+
 }
 
 

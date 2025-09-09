@@ -8,6 +8,7 @@ import { Divider } from 'primeng/divider';
 import { Tooltip } from 'primeng/tooltip';
 import { fromBlob } from 'image-resize-compress';
 import {ProgressSpinner} from 'primeng/progressspinner';
+import {Message} from 'primeng/message';
 
 @Component({
   selector: 'app-user-profile',
@@ -18,6 +19,7 @@ import {ProgressSpinner} from 'primeng/progressspinner';
     DatePipe,
     Tooltip,
     ProgressSpinner,
+    Message,
   ],
   templateUrl: './user-profile.html',
   styleUrl: './user-profile.scss'

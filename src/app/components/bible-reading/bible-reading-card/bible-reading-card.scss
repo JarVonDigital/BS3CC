@@ -1,4 +1,17 @@
 :host {
+
+  p-card {
+    margin: .5rem;
+    .header {
+      font-size: 1rem;
+      border-bottom: 1px solid rgb(240, 240, 240);
+      margin: 0 .2rem;
+      display: flex;
+      align-items: center;
+      gap: .4rem;
+    }
+  }
+
   .gems-form {
     display: flex;
     flex-direction: column;

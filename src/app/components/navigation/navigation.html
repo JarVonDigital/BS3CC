@@ -1,24 +1,44 @@
-<p-menubar class="menu" [model]="menuItems" >
-  <ng-template #start>
-    <h2 class="title">
-      BS3CC
-    </h2>
-  </ng-template>
+ <div class="title">BS3CC</div>
+  <div class="right">
+    <h4 class="date-time">{{bibleReadingEngine.$currentDate().toJSDate() | date: 'MMM, d, y h:mm'}}</h4>
+    @if(userEngine.$signedInUser()) {
+      <p-avatar
+        shape="circle"
+        [label]="userEngine.$signedInUser()?.photoURL ? undefined : userEngine.$signedInUser()?.email?.[0] ?? ''"
+        [image]="userEngine.$signedInUser()?.photoURL ?? undefined"
+        (click)="popover.toggle($event)"></p-avatar>
+      <p-popover #popover>
+        <p-button fluid label="Logout" (onClick)="userEngine.onLogout()"></p-button>
+      </p-popover>
+    } @else {
+      <p-button rounded text icon="pi pi-user" size="small" (click)="popover.toggle($event)"></p-button>
+      <p-popover #popover>
+        <app-login></app-login>
+      </p-popover>
+    }
+  </div>
 
-  <ng-template #end>
-    <div class="flex">
-      <h4 class="date-time">{{bibleReadingEngine.$currentDate().toJSDate() | date: 'MMM, d, y h:mm'}}</h4>
-      @if(userEngine.$signedInUser()) {
-        <p-avatar shape="circle" [label]="userEngine.$signedInUser()?.email?.[0] ?? ''" (click)="popover.toggle($event)"></p-avatar>
-        <p-popover #popover>
-         <p-button fluid label="Logout" (onClick)="userEngine.onLogout()"></p-button>
-        </p-popover>
-      } @else {
-        <p-button rounded text icon="pi pi-user" size="small" (click)="popover.toggle($event)"></p-button>
-        <p-popover #popover>
-          <app-login></app-login>
-        </p-popover>
-      }
-    </div>
-  </ng-template>
-</p-menubar>
+<!--<p-menubar class="menu" [model]="menuItems" >-->
+<!--  <ng-template #start>-->
+<!--    <h2 class="title">-->
+<!--      BS3CC-->
+<!--    </h2>-->
+<!--  </ng-template>-->
+
+<!--  <ng-template #end>-->
+<!--    <div class="flex">-->
+<!--      <h4 class="date-time">{{bibleReadingEngine.$currentDate().toJSDate() | date: 'MMM, d, y h:mm'}}</h4>-->
+<!--      @if(userEngine.$signedInUser()) {-->
+<!--        <p-avatar shape="circle" [label]="userEngine.$signedInUser()?.email?.[0] ?? ''" (click)="popover.toggle($event)"></p-avatar>-->
+<!--        <p-popover #popover>-->
+<!--         <p-button fluid label="Logout" (onClick)="userEngine.onLogout()"></p-button>-->
+<!--        </p-popover>-->
+<!--      } @else {-->
+<!--        <p-button rounded text icon="pi pi-user" size="small" (click)="popover.toggle($event)"></p-button>-->
+<!--        <p-popover #popover>-->
+<!--          <app-login></app-login>-->
+<!--        </p-popover>-->
+<!--      }-->
+<!--    </div>-->
+<!--  </ng-template>-->
+<!--</p-menubar>-->

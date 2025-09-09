@@ -1,4 +1,8 @@
-<p-card header="{{$header () ?? ($reading().date.toISODate() | date: 'MMM d, y')}}">
+<p-card>
+  <div class="header">
+    <b>{{$header () ?? ($reading().date.toISODate() | date: 'E, MMM d')}}</b>
+    <small>Bible Reading</small>
+  </div>
   <div class="readings">
     @for (chapter of $reading().reading; track $index) {
       @if (bibleReadingEngine.$bibleBooks().length > 0) {
