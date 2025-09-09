@@ -1,5 +1,5 @@
 @if(items().length != 0) {
-  <p-carousel [value]="items()" [autoplayInterval]="5000" [numVisible]="2.5" [showNavigators]="false">
+  <p-carousel [value]="items()" [autoplayInterval]="7000" [numVisible]="1.2" [showNavigators]="false">
     <ng-template #item let-item>
       @let verse = item.chapter + ':' + item.verse + (item.throughVerse ? '-' + item.throughVerse : '');
       <p-card header="{{getBook(item)?.name}} {{verse}}">

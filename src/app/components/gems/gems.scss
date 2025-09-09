@@ -2,6 +2,13 @@
   p-carousel {
     margin: 2rem 0 0 0;
     ::ng-deep {
+
+      p-card {
+        max-height: 9rem;
+        min-height: 9rem;
+        overflow: auto;
+      }
+
       .p-carousel-item-list {
         gap: 1rem;
       }
