@@ -146,7 +146,12 @@ export class BibleReadingEngine {
       await addDoc(this.gemsCollection, {
         userId: this.user.$signedInUser()?.uid,
         createdAt: DateTime.now().toISO(),
-        reading,
+        readingDetails: {
+          day: reading.day,
+          date: reading.date.toISO(),
+          scheduleId: reading.scheduleId,
+          reading: reading.reading,
+        },
         groupId,
         ...gem
       })
