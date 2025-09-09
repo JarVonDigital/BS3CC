@@ -93,7 +93,7 @@ export class BibleReadingCard implements AfterContentInit {
    * @return {Promise<void>} A promise that resolves when the gem submission process completes.
    */
   async submitGem(): Promise<void> {
-    await this.bibleReadingEngine.addGem(0, this.gemSubmissionForm.getRawValue() as any)
+    await this.bibleReadingEngine.addGem(0, this.$reading(), this.gemSubmissionForm.getRawValue() as any)
     this.$getDialogVisible.set(false);
     this.clearForm();
   }

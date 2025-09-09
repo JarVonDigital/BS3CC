@@ -141,11 +141,12 @@ export class BibleReadingEngine {
     })
   }
 
-  async addGem(groupId: number, gem: any) {
+  async addGem(groupId: number, reading: BibleReadingRef, gem: any) {
     await runInInjectionContext(this.injector, async () => {
       await addDoc(this.gemsCollection, {
         userId: this.user.$signedInUser()?.uid,
         createdAt: DateTime.now().toISO(),
+        reading,
         groupId,
         ...gem
       })

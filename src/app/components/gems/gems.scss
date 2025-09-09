@@ -1,0 +1,10 @@
+:host {
+  p-carousel {
+    margin: 2rem 0 0 0;
+    ::ng-deep {
+      .p-carousel-item-list {
+        gap: 1rem;
+      }
+    }
+  }
+}
