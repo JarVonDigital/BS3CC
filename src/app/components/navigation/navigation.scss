@@ -1,4 +1,7 @@
 :host {
+  top: 0;
+  position: sticky;
+  z-index: 1000;
   .menu {
     .title {
       font-family: "Fredoka", sans-serif;

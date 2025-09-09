@@ -1,30 +1,79 @@
 <p-card header="{{$header () ?? ($reading().date.toISODate() | date: 'MMM d, y')}}">
   <div class="readings">
     @for (chapter of $reading().reading; track $index) {
-      @if(bibleReadingEngine.$bibleBooks().length > 0) {
+      @if (bibleReadingEngine.$bibleBooks().length > 0) {
         <a [href]="bibleReadingEngine.bibleReadingLinkURL(chapter)" target="_blank">
-          <h4>{{bibleReadingEngine.$bibleBooks()[chapter.bookId - 1].abbr}} {{chapter.fromChapter}} - {{chapter.toChapter}}</h4>
+          <h4>{{ bibleReadingEngine.$bibleBooks()[chapter.bookId - 1].abbr }} {{ chapter.fromChapter }}
+            - {{ chapter.toChapter }}</h4>
         </a>
       }
     }
   </div>
 
-  @if(userEngine.$signedInUser()) {
-    @let progressPercentage = $progress()?.progress === 'PREPARING' ? Math.round(100 * 1/3) : $progress()?.progress === 'READING' ? Math.round(100 * 2/3) : $progress()?.progress === 'COMPLETE' ? Math.round(100 * 3/3) : 0;
+  @if (userEngine.$signedInUser()) {
+    @let
+    progressPercentage = $progress()?.progress === 'PREPARING' ? Math.round(100 * 1 / 3) : $progress()?.progress === 'READING' ? Math.round(100 * 2 / 3) : $progress()?.progress === 'COMPLETE' ? Math.round(100 * 3 / 3) : 0;
     <div class="progress">
-      <p-progress-bar [value]="progressPercentage" />
-        <p-button-group class="test">
-          <p-button [outlined]="$progress()?.progress !== 'PREPARING'" size="small" (click)="bibleReadingEngine.updateProgress($reading().scheduleId, 0, $reading().day, 'PREPARING')">Preparing</p-button>
-          <p-button [outlined]="$progress()?.progress !== 'READING'" size="small" (click)="bibleReadingEngine.updateProgress($reading().scheduleId, 0, $reading().day, 'READING')">Reading</p-button>
-          <p-button [outlined]="$progress()?.progress !== 'COMPLETE'" size="small" (click)="bibleReadingEngine.updateProgress($reading().scheduleId, 0, $reading().day, 'COMPLETE')">Complete</p-button>
-        </p-button-group>
+      <p-progress-bar [value]="progressPercentage"/>
+      <p-button-group class="test">
+        <p-button [outlined]="$progress()?.progress !== 'PREPARING'" size="small"
+                  (click)="bibleReadingEngine.updateProgress($reading().scheduleId, 0, $reading().day, 'PREPARING')">
+          Preparing
+        </p-button>
+        <p-button [outlined]="$progress()?.progress !== 'READING'" size="small"
+                  (click)="bibleReadingEngine.updateProgress($reading().scheduleId, 0, $reading().day, 'READING')">
+          Reading
+        </p-button>
+        <p-button [outlined]="$progress()?.progress !== 'COMPLETE'" size="small"
+                  (click)="bibleReadingEngine.updateProgress($reading().scheduleId, 0, $reading().day, 'COMPLETE')">
+          Complete
+        </p-button>
+      </p-button-group>
     </div>
 
 
     <ng-template #footer>
-<!--      <p-avatar-group>-->
-<!--        <p-avatar label="D" shape="circle"></p-avatar>-->
-<!--      </p-avatar-group>-->
+        <p-button
+          fluid
+          icon="pi pi-trophy"
+          label="Submit Gem"
+          [disabled]="$progress()?.progress != 'COMPLETE'" (click)="$getDialogVisible.set(true)"></p-button>
+      <p-dialog
+        header="Submit a Gem"
+        [(visible)]="$getDialogVisible"
+        [modal]="true"
+        [style]="{width: '80vw'}"
+        (onHide)="clearForm()">
+        <div class="gems-form" [formGroup]="gemSubmissionForm">
+          <p-select
+            [options]="bibleReadingEngine.$bibleBooks()"
+            filter
+            fluid
+            size="small"
+            placeholder="Select a book"
+            optionLabel="name"
+            optionValue="id"
+            appendTo="body" formControlName="book"></p-select>
+          <p-inputgroup>
+            <p-input-number size="small" placeholder="Chapter" formControlName="chapter"></p-input-number>
+            <p-button text>:</p-button>
+            <p-input-number size="small" placeholder="Verse" formControlName="verse"></p-input-number>
+            <p-button text>-</p-button>
+            <p-input-number size="small" placeholder="Verse" formControlName="throughVerse"></p-input-number>
+          </p-inputgroup>
+
+          <textarea pTextarea fluid autoResize [spellcheck]="true" [maxLength]="500" formControlName="comment"></textarea>
+
+          <p-button
+            [disabled]="gemSubmissionForm.invalid"
+            (click)="submitGem()"
+            fluid
+            size="small"
+            icon="pi pi-send"
+            label="Submit"></p-button>
+          <p>Please remember that any comments you post will be visible immediately. We encourage you to share thoughts that are kind, respectful, and upbuilding for everyone. Thank you for contributing in a positive way!</p>
+        </div>
+      </p-dialog>
     </ng-template>
   }
 

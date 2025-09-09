@@ -13,7 +13,6 @@ import {Tooltip} from 'primeng/tooltip';
   imports: [
     Avatar,
     AvatarGroup,
-    AsyncPipe,
     Divider,
     DatePipe,
     Tooltip

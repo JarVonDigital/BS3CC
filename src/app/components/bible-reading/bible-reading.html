@@ -2,20 +2,20 @@
 @let weeklyReading = bibleReadingEngine.$weeklyReadingSchedule();
 
 <app-user-profile></app-user-profile>
+<app-gems></app-gems>
 
 @if (reading) {
   <app-bible-reading-card [$header]="$header()" [$reading]="reading"></app-bible-reading-card>
 }
 
 <div class="week-overview">
-
   <div class="sticky">
-    <p-button size="small" rounded outlined icon="pi pi-arrow-right"></p-button>
+    <p-button rounded outlined icon="pi pi-arrow-right"></p-button>
   </div>
 
   @for (reading of weeklyReading; track reading.date) {
     <app-bible-reading-card [$reading]="reading"></app-bible-reading-card>
   }
 
-  <p-button size="small" rounded outlined icon="pi pi-arrow-left"></p-button>
+  <p-button rounded outlined icon="pi pi-arrow-left"></p-button>
 </div>

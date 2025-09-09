@@ -1,13 +1,20 @@
-import {effect, inject, Injectable, Signal, signal, WritableSignal} from '@angular/core';
+import {
+  effect,
+  EnvironmentInjector,
+  inject,
+  Injectable,
+  runInInjectionContext,
+  Signal,
+} from '@angular/core';
 import {
   Auth,
   signInWithEmailAndPassword,
   setPersistence,
   browserLocalPersistence, user, signOut, User
 } from '@angular/fire/auth';
-import {firstValueFrom, from, map} from 'rxjs';
+import {from} from 'rxjs';
 import {toSignal} from '@angular/core/rxjs-interop';
-import {addDoc, collection, doc, Firestore, getDoc, getDocs, setDoc} from '@angular/fire/firestore';
+import {collection, doc, Firestore, getDoc, getDocs, setDoc} from '@angular/fire/firestore';
 
 export interface UserLoginForm {
   email: string;
@@ -21,6 +28,7 @@ export class UserEngine {
 
   auth = inject(Auth)
   firestore = inject(Firestore)
+  injector = inject(EnvironmentInjector);
   userCollection = collection(this.firestore, 'users');
   $signedInUser: Signal<User | null | undefined> = toSignal(from(user(this.auth)));
 
@@ -42,27 +50,32 @@ export class UserEngine {
    * This operation is asynchronous.
    */
   updateUserDB = effect(async () => {
-    const user = this.$signedInUser();
-    if(!user) return;
+    await runInInjectionContext(this.injector, async () => {
+      const user = this.$signedInUser();
+      if(!user) return;
 
-    const docRef = doc(this.userCollection, user.uid);
-    const docData = await getDoc(docRef);
-    if(!docData.exists()) {
-      await setDoc(docRef, {
-        uid: user.uid,
-        email: user.email,
-        displayName: user.displayName,
-        photoURL: user.photoURL,
-        emailVerified: user.emailVerified,
-        createdAt: user.metadata.creationTime,
-        lastLogin: user.metadata.lastSignInTime
-      })
-    }
+      const docRef = doc(this.userCollection, user.uid);
+      const docData = await getDoc(docRef);
+      if(!docData.exists()) {
+        await setDoc(docRef, {
+          uid: user.uid,
+          email: user.email,
+          displayName: user.displayName,
+          photoURL: user.photoURL,
+          emailVerified: user.emailVerified,
+          createdAt: user.metadata.creationTime,
+          lastLogin: user.metadata.lastSignInTime
+        })
+      }
+    })
   })
 
   async getUsers(): Promise<User[]> {
-    let data = await getDocs(this.userCollection)
-    return data.docs.map(d => d.data() as User)
+    return await runInInjectionContext(this.injector, async () => {
+      let data = await getDocs(this.userCollection)
+      return data.docs.map(d => d.data() as User)
+    })
+
   }
 
   async loginWithEmailAndPassword({email, password}: UserLoginForm) {

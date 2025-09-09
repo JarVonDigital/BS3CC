@@ -1,21 +1,31 @@
-import {computed, effect, inject, Injectable, Signal, signal, WritableSignal} from '@angular/core';
+import {
+  computed,
+  EnvironmentInjector,
+  inject,
+  Injectable,
+  runInInjectionContext,
+  Signal,
+  signal,
+  WritableSignal
+} from '@angular/core';
 import {DateTime} from 'luxon';
 import {BibleReadingSchedule} from '../data/br.schedule.data';
 import {
   addDoc,
   collection,
-  doc, docData,
+  collectionData,
+  doc,
+  docData,
   Firestore,
-  getDoc, getDocFromServer,
-  getDocs, getDocsFromServer,
+  getDocs,
+  getDocsFromServer,
   orderBy,
   query,
   setDoc,
   where
 } from '@angular/fire/firestore';
 import {UserEngine} from './user.engine';
-import {from, map, Observable, of, switchMap} from 'rxjs';
-import {BibleReading} from '../components/bible-reading/bible-reading';
+import {from, Observable, of, switchMap} from 'rxjs';
 
 export interface BibleReadingProgressObject {
   userId: string;
@@ -57,10 +67,12 @@ export class BibleReadingEngine {
 
   user = inject(UserEngine)
   firestore = inject(Firestore);
+  injector = inject(EnvironmentInjector);
 
   private bibleReadingSchedules = collection(this.firestore, 'bible-reading-schedules')
   private bibleBooksCollection = collection(this.firestore, 'bible-books');
   private bibleReadingProgress = collection(this.firestore, 'progress');
+  private gemsCollection = collection(this.firestore, 'gems');
 
   $currentDate = signal(DateTime.now());
   $bibleReadingStartDate = signal(DateTime.fromISO('2025-09-08').startOf('day'));
@@ -69,7 +81,7 @@ export class BibleReadingEngine {
 
   $bibleReadingSchedules: WritableSignal<BibleReadingScheduleRef[]> = signal([]);
   $bibleReadingSchedule: Signal<BibleReadingRef[]> = computed(() => {
-    if(!this.$bibleReadingSchedules()) return [] as BibleReadingRef[];
+    if (!this.$bibleReadingSchedules()) return [] as BibleReadingRef[];
     const schId = 0;
     return (this.$bibleReadingSchedules().find(s => s.scheduleId === schId)?.schedule ?? [])
       .map(r => ({
@@ -91,104 +103,130 @@ export class BibleReadingEngine {
     if (this.$currentDate() > this.$bibleReadingStartDate()) {
       return this.$bibleReadingSchedule().filter(r => r.day <= 7)
     }
-    return this.$bibleReadingSchedule().filter(r => r?.date >= this.$currentDate() && r.date <= this.$currentDate().plus({days: 7}))
+    return this.$bibleReadingSchedule().filter(r => r?.date >= this.$currentDate().startOf("week") && r.date <= this.$currentDate().endOf("week"))
   })
 
   constructor() {
     setInterval(() => {
       this.$currentDate.set(DateTime.now());
     }, 100);
-
-    this.getBibleBooks();
-    this.getSchedules()
   }
 
   private async updateSchedule() {
+    await runInInjectionContext(this.injector, async () => {
       let d = doc(this.bibleReadingSchedules, '0')
       await setDoc(d, {
         scheduleId: 0,
         schedule: BibleReadingSchedule.readings
       })
+    })
   }
 
-  private async getSchedules() {
-    let docs = await getDocs(this.bibleReadingSchedules)
-    if(!docs.empty) {
-      this.$bibleReadingSchedules.set(docs.docs.map(d => d.data() as BibleReadingScheduleRef))
-    }
+  async getSchedules() {
+    await runInInjectionContext(this.injector, async () => {
+      let docs = await getDocs(this.bibleReadingSchedules)
+      if (!docs.empty) {
+        this.$bibleReadingSchedules.set(docs.docs.map(d => d.data() as BibleReadingScheduleRef))
+      }
+    })
+  }
+
+  getGems() {
+    return runInInjectionContext(this.injector, () => {
+      let q = query(
+        this.gemsCollection,
+        where('groupId', '==', 0),
+      )
+      return collectionData(q, {idField: 'id'}) as Observable<any[]>;
+    })
+  }
+
+  async addGem(groupId: number, gem: any) {
+    await runInInjectionContext(this.injector, async () => {
+      await addDoc(this.gemsCollection, {
+        userId: this.user.$signedInUser()?.uid,
+        createdAt: DateTime.now().toISO(),
+        groupId,
+        ...gem
+      })
+    })
   }
 
   async getBibleBooks() {
-    let q = query(this.bibleBooksCollection, orderBy('id', 'asc'))
-    let data = await getDocs(q);
-    console.log(data.docs.map(d => d.data()))
-    this.$bibleBooks.set(data.docs.map(d => d.data() as BibleBooks))
+    await runInInjectionContext(this.injector, async () => {
+      let q = query(this.bibleBooksCollection, orderBy('id', 'asc'))
+      let data = await getDocs(q);
+      this.$bibleBooks.set(data.docs.map(d => d.data() as BibleBooks))
+    })
+
   }
 
   getProgress(scheduleId: number, groupId: number, day: number) {
-    const q = query(
-      this.bibleReadingProgress,
-      where('scheduleId', '==', scheduleId),
-      where('groupId', '==', groupId),
-      where('userId', '==', this.user.$signedInUser()?.uid ?? ''),
-      where('day', '==', day)
-    )
+    return runInInjectionContext(this.injector, () => {
+      const q = query(
+        this.bibleReadingProgress,
+        where('scheduleId', '==', scheduleId),
+        where('groupId', '==', groupId),
+        where('userId', '==', this.user.$signedInUser()?.uid ?? ''),
+        where('day', '==', day)
+      )
 
-    return from(getDocsFromServer(q)).pipe(
-      switchMap((docs) => {
-        if (docs.empty) {
-          return of({
-            progress: "PREPARING",
-            readingStarted: "",
-            readingCompleted: ""
-          } as BibleReadingProgressObject);
-        }
-        return docData(docs.docs[0].ref) as Observable<BibleReadingProgressObject>;
-      })
-    );
+      return from(getDocsFromServer(q)).pipe(
+        switchMap((docs) => {
+          if (docs.empty) {
+            return of({
+              progress: "PREPARING",
+              readingStarted: "",
+              readingCompleted: ""
+            } as BibleReadingProgressObject);
+          }
+          return docData(docs.docs[0].ref) as Observable<BibleReadingProgressObject>;
+        })
+      );
+    })
+
   }
 
   async updateProgress(scheduleId: number, groupId: number, day: number, progress: "PREPARING" | "READING" | "COMPLETE") {
-    const q = query(
-      this.bibleReadingProgress,
-      where('scheduleId', '==', scheduleId),
-      where('groupId', '==', groupId),
-      where('day', '==', day),
-      where('userId', '==', this.user.$signedInUser()?.uid)
-    )
-    const docs = await getDocs(q);
+    await runInInjectionContext(this.injector, async () => {
+      const q = query(
+        this.bibleReadingProgress,
+        where('scheduleId', '==', scheduleId),
+        where('groupId', '==', groupId),
+        where('day', '==', day),
+        where('userId', '==', this.user.$signedInUser()?.uid)
+      )
+      const docs = await getDocs(q);
 
-    console.log(docs.docs.map(d => d.data()))
-    console.log(docs.empty)
-
-    if (docs.empty) {
-      if (this.user.$signedInUser()?.uid) {
-        const progObj: BibleReadingProgressObject = {
-          groupId,
-          scheduleId,
-          progress,
-          day,
-          userId: this.user.$signedInUser()!.uid,
-          readingCompleted: progress === "COMPLETE" ? DateTime.now().toISO() : "",
-          readingStarted: progress === "READING" ? DateTime.now().toISO() : ""
+      if (docs.empty) {
+        if (this.user.$signedInUser()?.uid) {
+          const progObj: BibleReadingProgressObject = {
+            groupId,
+            scheduleId,
+            progress,
+            day,
+            userId: this.user.$signedInUser()!.uid,
+            readingCompleted: progress === "COMPLETE" ? DateTime.now().toISO() : "",
+            readingStarted: progress === "READING" ? DateTime.now().toISO() : ""
+          }
+          await addDoc(this.bibleReadingProgress, progObj);
+          return;
         }
-        await addDoc(this.bibleReadingProgress, progObj);
-        return;
       }
-    }
 
-    let doc = docs.docs[0]
-    let docData = doc.data() as BibleReadingProgressObject
-    await setDoc(doc.ref, {
-      scheduleId,
-      groupId,
-      userId: this.user.$signedInUser()?.uid,
-      day,
-      progress,
-      readingCompleted: progress === "COMPLETE" ? DateTime.now().toISO() : docData.readingCompleted,
-      readingStarted: progress === "READING" ? DateTime.now().toISO() : docData.readingStarted
+      let doc = docs.docs[0]
+      let docData = doc.data() as BibleReadingProgressObject
+      await setDoc(doc.ref, {
+        scheduleId,
+        groupId,
+        userId: this.user.$signedInUser()?.uid,
+        day,
+        progress,
+        readingCompleted: progress === "COMPLETE" ? DateTime.now().toISO() : docData.readingCompleted,
+        readingStarted: progress === "READING" ? DateTime.now().toISO() : docData.readingStarted
+      })
+      return;
     })
-    return;
   }
 
   /**

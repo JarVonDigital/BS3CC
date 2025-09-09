@@ -1,0 +1,12 @@
+:host {
+  .gems-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+
+    p {
+      font-size: .8rem;
+      text-align: center;
+    }
+  }
+}

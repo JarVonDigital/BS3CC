@@ -6,6 +6,9 @@ import {Button} from 'primeng/button';
 import {BibleReadingSchedule} from '../../data/br.schedule.data';
 import {BibleReadingCard} from './bible-reading-card/bible-reading-card';
 import {UserProfile} from '../user-profile/user-profile';
+import {DatePicker} from 'primeng/datepicker';
+import {DateTime} from 'luxon';
+import {Gems} from '../gems/gems';
 
 @Component({
   selector: 'app-bible-reading',
@@ -15,7 +18,9 @@ import {UserProfile} from '../user-profile/user-profile';
     Button,
     JsonPipe,
     BibleReadingCard,
-    UserProfile
+    UserProfile,
+    DatePicker,
+    Gems
   ],
   templateUrl: './bible-reading.html',
   styleUrl: './bible-reading.scss'
@@ -32,5 +37,4 @@ export class BibleReading {
     if(current >= start) {return `${current.toFormat('DD')} | ${header}`}
     return header;
   })
-  protected readonly BibleReadingSchedule = BibleReadingSchedule;
 }

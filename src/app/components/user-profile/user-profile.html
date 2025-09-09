@@ -9,7 +9,7 @@
     @for(user of $users(); track user.uid) {
       <p-avatar label="{{user.email?.[0]}}" [pTooltip]="user.email ?? ''" shape="circle"></p-avatar>
     }
-    <p-avatar [label]="$users()?.length?.toString() ?? '0'" shape="circle"></p-avatar>
+    <p-avatar icon="pi pi-users" shape="circle"></p-avatar>
   </p-avatar-group>
 </div>
 
