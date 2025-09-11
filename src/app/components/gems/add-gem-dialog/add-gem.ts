@@ -44,10 +44,10 @@ export class AddGem implements OnInit, OnDestroy {
   protected readonly bibleReadingEngine = inject(BibleReadingEngine);
 
   protected form = this.fb.group({
-    book: this.fb.control(0, {validators: [Validators.required]}),
-    chapter: this.fb.control(0, {validators: [Validators.required]}),
-    verse: this.fb.control(0, {validators: [Validators.required]}),
-    throughVerse: 0,
+    book: this.fb.control(1, {validators: [Validators.required]}),
+    chapter: this.fb.control(null, {validators: [Validators.required]}),
+    verse: this.fb.control(null, {validators: [Validators.required]}),
+    throughVerse: null,
     comment: this.fb.control("", {validators: [Validators.required]})
   })
 
@@ -80,7 +80,7 @@ export class AddGem implements OnInit, OnDestroy {
       await this.bibleReadingEngine.updateGem(gem, this.form.getRawValue() as any)
     }
     if(this.reading()) {
-      await this.bibleReadingEngine.addGem(gem.groupId, reading, this.form.getRawValue() as any)
+      await this.bibleReadingEngine.addGem(0, reading, this.form.getRawValue() as any)
     }
 
     this.dialog.close()
