@@ -19,6 +19,7 @@
         <p-avatar
           size="xlarge"
           shape="circle"
+          [style]="{height: '8rem', width: '8rem'}"
           [icon]="user.$signedInUser()?.photoURL ? undefined : 'pi pi-user'"
           [image]="user.$signedInUser()?.photoURL ?? undefined"
           (click)="updateProfileImage()">
@@ -31,18 +32,24 @@
       <h4>Joined: {{ user.$signedInUser()?.metadata?.creationTime | date: 'MMM, d, y' }}</h4>
 
       <p-divider></p-divider>
-
-      <p-avatar-group>
+      <div class="avatars">
+              <p-avatar-group>
         @for (user of $users(); track user.uid) {
           <p-avatar
+            size="large"
             [label]="user.photoURL ? undefined : user.email?.[0]"
             [pTooltip]="user.email ?? undefined"
             [image]="user.photoURL ?? undefined"
             [fitContent]="false"
             shape="circle"></p-avatar>
         }
-        <p-avatar icon="pi pi-users" shape="circle"></p-avatar>
-      </p-avatar-group>
+              </p-avatar-group>
+      </div>
+
+      <p-divider></p-divider>
+
+      <h3>{{($completed() / $totalProgress()) * 100}}% / 100% <small>| Completed</small></h3>
+<!--      <p-progress-bar [value]="($completed() / $totalProgress()) * 100" [showValue]="true"></p-progress-bar>-->
     </div>
   </div>
 

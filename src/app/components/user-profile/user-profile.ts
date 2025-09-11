@@ -1,4 +1,4 @@
-import {Component, inject, signal} from '@angular/core';
+import {Component, computed, inject, signal} from '@angular/core';
 import { Avatar } from 'primeng/avatar';
 import { UserEngine } from '../../services/user.engine';
 import { AvatarGroup } from 'primeng/avatargroup';
@@ -9,6 +9,8 @@ import { Tooltip } from 'primeng/tooltip';
 import { fromBlob } from 'image-resize-compress';
 import {ProgressSpinner} from 'primeng/progressspinner';
 import {Message} from 'primeng/message';
+import {ProgressBar} from 'primeng/progressbar';
+import {BibleReadingEngine} from '../../services/bible-reading.engine';
 
 @Component({
   selector: 'app-user-profile',
@@ -20,13 +22,22 @@ import {Message} from 'primeng/message';
     Tooltip,
     ProgressSpinner,
     Message,
+    ProgressBar,
   ],
   templateUrl: './user-profile.html',
   styleUrl: './user-profile.scss'
 })
 export class UserProfile {
+  bibleReadingEngine = inject(BibleReadingEngine);
   user: UserEngine = inject(UserEngine);
   $users = toSignal(this.user.getUsers());
+  $progress = toSignal(this.bibleReadingEngine.getUserProgress('COMPLETE'))
+  $completed = computed(() => {
+    return this.$progress()?.length ?? 0;
+  })
+  $totalProgress = computed(() => {
+    return this.bibleReadingEngine.$bibleReadingSchedule().flatMap(s => s.reading).length ?? 0
+  })
   $isUpdatingAvatar = signal(false)
 
   async updateProfileImage() {

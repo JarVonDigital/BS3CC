@@ -188,11 +188,21 @@ export class BibleReadingEngine {
         where('scheduleId', '==', 0),
         where('groupId', '==', 0)
       )
-
       return collectionData(q) as Observable<BibleReadingProgressObject[]>
-
     })
+  }
 
+  getUserProgress(status: string): Observable<BibleReadingProgressObject[]> {
+    return runInInjectionContext(this.injector, () => {
+      const q = query(
+        this.bibleReadingProgress,
+        where('scheduleId', '==', 0),
+        where('groupId', '==', 0),
+        where('userId', '==', this.user.$signedInUser()?.uid),
+        where('progress', '==', status)
+      )
+      return collectionData(q) as Observable<BibleReadingProgressObject[]>
+    })
   }
 
   async updateProgress(scheduleId: number, groupId: number, day: number, progress: "PREPARING" | "READING" | "COMPLETE") {
