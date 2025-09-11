@@ -1,12 +1,12 @@
-import {Component, inject} from '@angular/core';
+import {Component, inject, signal} from '@angular/core';
 import {Carousel} from 'primeng/carousel';
 import {Card} from 'primeng/card';
 import {toSignal} from '@angular/core/rxjs-interop';
-import {from} from 'rxjs';
 import {BibleReadingEngine} from '../../services/bible-reading.engine';
 import {UserEngine} from '../../services/user.engine';
 import {Button} from 'primeng/button';
-import {AsyncPipe, DatePipe} from '@angular/common';
+import {DatePipe, JsonPipe} from '@angular/common';
+import {GemsEngine} from '../../services/gems.engine';
 
 @Component({
   selector: 'app-gems',
@@ -14,15 +14,19 @@ import {AsyncPipe, DatePipe} from '@angular/common';
     Carousel,
     Card,
     DatePipe,
+    Button,
+    JsonPipe,
   ],
   templateUrl: './gems.html',
   styleUrl: './gems.scss'
 })
 export class Gems {
+  protected gemsEngine = inject(GemsEngine);
   protected readonly userEngine = inject(UserEngine);
   protected readonly bibleReadingEngine = inject(BibleReadingEngine);
   items = toSignal(this.bibleReadingEngine.getGems(), {initialValue: []});
   $users = toSignal(this.userEngine.getUsers(), {initialValue: []});
+  $gemEditing = signal(false)
 
   getBook(item: any) {
     return this.bibleReadingEngine.$bibleBooks()

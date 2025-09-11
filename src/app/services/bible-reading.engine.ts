@@ -21,7 +21,7 @@ import {
   getDocsFromServer,
   orderBy,
   query,
-  setDoc,
+  setDoc, updateDoc,
   where
 } from '@angular/fire/firestore';
 import {UserEngine} from './user.engine';
@@ -152,11 +152,21 @@ export class BibleReadingEngine {
         createdAt: DateTime.now().toISO(),
         readingDetails: {
           day: reading.day,
-          date: reading.date.toISO(),
+          date: typeof reading.date === 'string' ? reading.date : reading.date.toISO(),
           scheduleId: reading.scheduleId,
           reading: reading.reading,
         },
         groupId,
+        ...gem
+      })
+    })
+  }
+
+  async updateGem(original: any, gem: any) {
+    await runInInjectionContext(this.injector, async () => {
+      const docRef = doc(this.gemsCollection, original.id);
+      await updateDoc(docRef, {
+        ...original,
         ...gem
       })
     })

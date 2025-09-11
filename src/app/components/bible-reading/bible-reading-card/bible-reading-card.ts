@@ -1,35 +1,23 @@
 import {
-  AfterContentInit,
   Component,
   effect,
   inject,
   input,
   InputSignal,
   signal,
-  Signal,
   WritableSignal
 } from '@angular/core';
 import {Card} from 'primeng/card';
-import {BibleReadingSchedule} from '../../../data/br.schedule.data';
 import {ProgressBar} from 'primeng/progressbar';
 import {BibleReadingEngine, BibleReadingProgressObject, BibleReadingRef} from '../../../services/bible-reading.engine';
-import {AsyncPipe, DatePipe, JsonPipe} from '@angular/common';
-import {AvatarGroup} from 'primeng/avatargroup';
-import {Avatar} from 'primeng/avatar';
+import {DatePipe, JsonPipe} from '@angular/common';
 import {UserEngine} from '../../../services/user.engine';
 import {ButtonGroup} from 'primeng/buttongroup';
 import {Button} from 'primeng/button';
-import {Fluid} from 'primeng/fluid';
-import {from} from 'rxjs';
 import {toSignal} from '@angular/core/rxjs-interop';
-import {Dialog} from 'primeng/dialog';
-import {Select} from 'primeng/select';
-import {InputNumber} from 'primeng/inputnumber';
-import {InputGroup} from 'primeng/inputgroup';
-import {Textarea} from 'primeng/textarea';
 import {FormBuilder, ReactiveFormsModule, Validators} from '@angular/forms';
-import {AutoFocus} from 'primeng/autofocus';
 import {Chip} from 'primeng/chip';
+import {GemsEngine} from '../../../services/gems.engine';
 
 @Component({
   selector: 'app-bible-reading-card',
@@ -37,17 +25,9 @@ import {Chip} from 'primeng/chip';
     Card,
     ProgressBar,
     DatePipe,
-    AvatarGroup,
-    Avatar,
-    JsonPipe,
     ButtonGroup,
     Button,
     Button,
-    Dialog,
-    Select,
-    InputNumber,
-    InputGroup,
-    Textarea,
     ReactiveFormsModule,
     Chip
   ],
@@ -60,7 +40,8 @@ export class BibleReadingCard {
   $reading: InputSignal<BibleReadingRef> = input.required();
   $getDialogVisible = signal(false);
 
-  protected readonly userEngine = inject(UserEngine)
+  protected gemsEngine = inject(GemsEngine);
+  protected readonly userEngine = inject(UserEngine);
   protected fb = inject(FormBuilder);
   protected readonly bibleReadingEngine = inject(BibleReadingEngine);
   protected readonly Math = Math;

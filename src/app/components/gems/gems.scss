@@ -11,6 +11,16 @@
         display: flex;
         flex-direction: column;
 
+        .p-card-body, .p-card-content {
+          display: flex;
+          flex-direction: column;
+          flex: 1;
+        }
+
+        .scrollable-content {
+          overflow: auto; // enable vertical scrolling
+        }
+
         .header {
           font-size: 1rem;
           font-weight: bold;
@@ -22,7 +32,21 @@
         }
 
         .comment {
+          display: flex;
+          flex-direction: column;
           flex: 1;
+
+          textarea {
+            flex: 1;
+          }
+        }
+
+        .actions {
+          display: flex;
+          align-items: center;
+          justify-content: flex-end;
+          margin: 1rem 0 0 0;
+          gap: .5rem;
         }
       }
     }

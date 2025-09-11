@@ -1,6 +1,6 @@
 <p-card>
   <div class="header">
-    <b>{{$header () ?? ($reading().date.toISODate() | date: 'E, MMM d')}}</b>
+    <b>{{$header () ?? ($reading().date!.toISODate() | date: 'E, MMM d')}}</b>
     <small>Bible Reading</small>
   </div>
   <div class="readings">
@@ -45,51 +45,9 @@
           fluid
           icon="pi pi-trophy"
           label="Submit Gem"
-          [disabled]="$progress()?.progress != 'COMPLETE'" (click)="$getDialogVisible.set(true)"></p-button>
-      <p-dialog
-        header="Submit a Gem"
-        [(visible)]="$getDialogVisible"
-        [modal]="true"
-        [style]="{width: '80vw'}"
-        (onHide)="clearForm()">
-        <div class="gems-form" [formGroup]="gemSubmissionForm">
-          <p-select
-            [options]="bibleReadingEngine.$bibleBooks()"
-            filter
-            fluid
-            size="small"
-            placeholder="Select a book"
-            optionLabel="name"
-            optionValue="id"
-            appendTo="body" formControlName="book"></p-select>
-          <p-inputgroup>
-            <p-input-number size="small" placeholder="Chapter" formControlName="chapter"></p-input-number>
-            <p-button text>:</p-button>
-            <p-input-number size="small" placeholder="Verse" formControlName="verse"></p-input-number>
-            <p-button text>-</p-button>
-            <p-input-number size="small" placeholder="Verse" formControlName="throughVerse"></p-input-number>
-          </p-inputgroup>
-
-          <textarea
-            pTextarea
-            fluid
-            autoResize
-            [spellcheck]="true"
-            [maxLength]="275"
-            formControlName="comment"></textarea>
-
-          <h4>{{gemSubmissionForm.getRawValue()?.comment?.length}} / 275 Characters</h4>
-
-          <p-button
-            [disabled]="gemSubmissionForm.invalid"
-            (click)="submitGem()"
-            fluid
-            size="small"
-            icon="pi pi-send"
-            label="Submit"></p-button>
-          <p>Please remember that any comments you post will be visible immediately. We encourage you to share thoughts that are kind, respectful, and upbuilding for everyone. Thank you for contributing in a positive way!</p>
-        </div>
-      </p-dialog>
+          [disabled]="$progress()?.progress != 'COMPLETE'"
+          (click)="gemsEngine.openNewGemDialog($reading())"></p-button>
+<!--      <app-add-gem-dialog [($visible)]="$getDialogVisible" [$reading]="$reading()"></app-add-gem-dialog>-->
     </ng-template>
   }
 

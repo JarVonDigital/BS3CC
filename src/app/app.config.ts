@@ -11,11 +11,13 @@ import {getAuth, provideAuth} from '@angular/fire/auth';
 import {getFirestore, provideFirestore} from '@angular/fire/firestore';
 import {LogLevel, setLogLevel} from '@angular/fire';
 import {getStorage, provideStorage} from '@angular/fire/storage';
+import {DialogService} from 'primeng/dynamicdialog';
 
 setLogLevel(LogLevel.VERBOSE);
 
 export const appConfig: ApplicationConfig = {
   providers: [
+    DialogService,
     provideBrowserGlobalErrorListeners(),
     provideRouter(routes),
     provideAnimations(),
