@@ -26,6 +26,7 @@ export class GemsEngine {
     this.dialog = this.dialogService.open(AddGem, {
       header: 'Add Gem',
       closable: true,
+      modal: true,
       inputValues: { reading },
       style: {
         width: '90vw'
@@ -40,6 +41,7 @@ export class GemsEngine {
     this.dialog = this.dialogService.open(AddGem, {
       header: 'Edit Gem',
       closable: true,
+      modal: true,
       inputValues: { gem },
       style: {
         width: '90vw'
