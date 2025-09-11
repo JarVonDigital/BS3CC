@@ -1,10 +1,12 @@
 @if (user.$signedInUser()) {
 
-  <div class="messages">
-    <p-message size="small" severity="secondary">
-      Profile pictures must be in JPEG format.
-    </p-message>
-  </div>
+  @if (!iconOnly()) {
+    <div class="messages">
+      <p-message size="small" severity="secondary">
+        Profile pictures must be in JPEG format.
+      </p-message>
+    </div>
+  }
 
   <div class="main">
     <div class="user-profile">
@@ -27,41 +29,43 @@
       }
 
     </div>
-    <div class="details">
 
-      <div class="container">
-        <div class="flex with-space">
-          <div class="user-profile">
-            <h2>{{ getUserName() }}</h2>
-            <h4>Joined: {{ user.$signedInUser()?.metadata?.creationTime | date: 'MMM, d, y' }}</h4>
+    @if (!iconOnly()) {
+      <div class="details">
+
+        <div class="container">
+          <div class="flex with-space">
+            <div class="user-profile">
+              <h2>{{ getUserName() }}</h2>
+              <h4>Joined: {{ user.$signedInUser()?.metadata?.creationTime | date: 'MMM, d, y' }}</h4>
+            </div>
+            <div class="settings">
+              <p-button rounded text icon="pi pi-cog" (click)="user.openSettingsDialog()"></p-button>
+            </div>
           </div>
-          <div class="settings">
-            <p-button rounded text icon="pi pi-cog"></p-button>
-          </div>
+          <p-divider></p-divider>
         </div>
+
+
+        <div class="avatars">
+          <p-avatar-group>
+            @for (user of $users(); track user.uid) {
+              <p-avatar
+                size="large"
+                [label]="user.photoURL ? undefined : user.email?.[0]"
+                [pTooltip]="user.email ?? undefined"
+                [image]="user.photoURL ?? undefined"
+                [fitContent]="false"
+                shape="circle"></p-avatar>
+            }
+          </p-avatar-group>
+        </div>
+
         <p-divider></p-divider>
+
+        <h3>{{ ($completed() / $totalProgress()) * 100 }}% / 100% <small>| Completed</small></h3>
       </div>
-
-
-      <div class="avatars">
-        <p-avatar-group>
-          @for (user of $users(); track user.uid) {
-            <p-avatar
-              size="large"
-              [label]="user.photoURL ? undefined : user.email?.[0]"
-              [pTooltip]="user.email ?? undefined"
-              [image]="user.photoURL ?? undefined"
-              [fitContent]="false"
-              shape="circle"></p-avatar>
-          }
-        </p-avatar-group>
-      </div>
-
-      <p-divider></p-divider>
-
-      <h3>{{ ($completed() / $totalProgress()) * 100 }}% / 100% <small>| Completed</small></h3>
-      <!--      <p-progress-bar [value]="($completed() / $totalProgress()) * 100" [showValue]="true"></p-progress-bar>-->
-    </div>
+    }
   </div>
 
 }

@@ -1,22 +1,35 @@
 import {
+  computed,
   effect,
   EnvironmentInjector,
   inject,
   Injectable,
-  runInInjectionContext,
-  Signal,
+  runInInjectionContext, signal,
+  Signal, untracked,
 } from '@angular/core';
 import {
   Auth,
   signInWithEmailAndPassword,
   setPersistence,
   browserLocalPersistence, user, signOut, User,
-  updateProfile
+  updateProfile, updatePhoneNumber, updateEmail
 } from '@angular/fire/auth';
 import {from, Observable} from 'rxjs';
 import {toSignal} from '@angular/core/rxjs-interop';
-import {collection, collectionData, doc, Firestore, getDoc, getDocs, setDoc, updateDoc} from '@angular/fire/firestore';
+import {
+  collection,
+  collectionData,
+  doc,
+  docData,
+  Firestore,
+  getDoc,
+  getDocs,
+  setDoc,
+  updateDoc
+} from '@angular/fire/firestore';
 import {getDownloadURL, getStorage, ref, uploadBytes} from '@angular/fire/storage';
+import {DialogService} from 'primeng/dynamicdialog';
+import {Settings} from '../components/user/settings/settings';
 
 export interface UserLoginForm {
   email: string;
@@ -31,9 +44,22 @@ export class UserEngine {
   auth = inject(Auth)
   firestore = inject(Firestore)
   injector = inject(EnvironmentInjector);
+  dialogService = inject(DialogService)
   userCollection = collection(this.firestore, 'users');
+  $refreshUser = signal(false);
+  $userDocRef = computed(() => doc(this.userCollection, this.$signedInUser()?.uid))
   $signedInUser: Signal<User | null | undefined> = toSignal(from(user(this.auth)));
-
+  $user = computed(async () => {
+    return await runInInjectionContext(this.injector, async () => {
+      this.$refreshUser(); // Register
+      if (!this.$signedInUser()) return null;
+      const signedInUserDbDetails = await getDoc(this.$userDocRef());
+      return ({
+        ...this.$signedInUser()?.toJSON(),
+        ...signedInUserDbDetails.data()
+      })
+    })
+  })
   /**
    * Effect function to update the user database with the signed-in user's information.
    *
@@ -55,22 +81,29 @@ export class UserEngine {
     await runInInjectionContext(this.injector, async () => {
       const user = this.$signedInUser();
       if (!user) return;
-
-      const docRef = doc(this.userCollection, user.uid);
-      const docData = await getDoc(docRef);
+      const docData = await getDoc(this.$userDocRef());
       if (!docData.exists()) {
-        await setDoc(docRef, {
+        await setDoc(this.$userDocRef(), {
           uid: user.uid,
-          email: user.email,
-          displayName: user.displayName,
           photoURL: user.photoURL,
-          emailVerified: user.emailVerified,
-          createdAt: user.metadata.creationTime,
-          lastLogin: user.metadata.lastSignInTime
+          firstName: '',
+          lastName: '',
+          middleName: '',
         })
       }
     })
   })
+
+  openSettingsDialog() {
+    this.dialogService.open(Settings, {
+      header: 'Settings',
+      closable: true,
+      modal: true,
+      style: {
+        width: '90vw'
+      }
+    })
+  }
 
   getUsers(): Observable<User[]> {
     return runInInjectionContext(this.injector, () => {
@@ -85,7 +118,15 @@ export class UserEngine {
     return await getDownloadURL(storageRef); // return public URL
   }
 
-  async loginWithEmailAndPassword({email, password}: UserLoginForm) {
+  /**
+   * Authenticates a user using email and password credentials.
+   *
+   * @param {Object} param - An object containing user login information.
+   * @param {string} param.email - The email address of the user.
+   * @param {string} param.password - The password of the user.
+   * @return {Promise<void>} A promise that resolves when authentication is successful or logs an error if it fails.
+   */
+  async loginWithEmailAndPassword({email, password}: UserLoginForm): Promise<void> {
     try {
       await setPersistence(this.auth, browserLocalPersistence);
       await signInWithEmailAndPassword(this.auth, email, password);
@@ -106,8 +147,18 @@ export class UserEngine {
    * @return {Promise<void>} A promise that resolves when the profile photo has been successfully updated.
    */
   async updateProfilePhoto(param: { photoURL: string }): Promise<void> {
-    const docRef = doc(this.userCollection, this.$signedInUser()?.uid);
+    if (!this.auth.currentUser) return;
     await updateProfile(this.auth.currentUser!, param);
-    await updateDoc(docRef, param)
+    await updateDoc(this.$userDocRef(), param)
+  }
+
+  async updateUser(user: any) {
+    const currentUser = this.auth.currentUser;
+    if (!currentUser) return;
+
+    await updateProfile(currentUser, user);
+    await updateEmail(currentUser, user.email);
+    await updateDoc(this.$userDocRef(), user);
+    this.$refreshUser.update((val) => !val);
   }
 }

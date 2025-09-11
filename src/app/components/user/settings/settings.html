@@ -1,1 +1,32 @@
-<p>settings works!</p>
+<div class="form" [formGroup]="form">
+  <p-fluid>
+
+    <app-user-profile [iconOnly]="true"></app-user-profile>
+
+    <p-inputgroup>
+      <p-float-label variant="in">
+        <input pInputText type="text" [autocomplete]="false" formControlName="firstName">
+        <label>First Name</label>
+      </p-float-label>
+    </p-inputgroup>
+
+    <p-inputgroup>
+      <p-float-label variant="in">
+        <input pInputText type="text" [autocomplete]="false" formControlName="lastName">
+        <label>Last Name</label>
+      </p-float-label>
+    </p-inputgroup>
+
+    <p-divider></p-divider>
+
+    <p-inputgroup>
+      <p-float-label variant="in">
+        <input pInputText type="email" [autocomplete]="false" formControlName="email">
+        <label>Email</label>
+      </p-float-label>
+    </p-inputgroup>
+
+    <p-button label="Update" (click)="updateUser()"></p-button>
+
+  </p-fluid>
+</div>

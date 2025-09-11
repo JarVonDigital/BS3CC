@@ -1,4 +1,4 @@
-import {Component, computed, inject, signal} from '@angular/core';
+import {Component, computed, inject, input, signal} from '@angular/core';
 import { Avatar } from 'primeng/avatar';
 import { UserEngine } from '../../../services/user.engine';
 import { AvatarGroup } from 'primeng/avatargroup';
@@ -30,6 +30,8 @@ import {Button} from 'primeng/button';
   styleUrl: './user-profile.scss'
 })
 export class UserProfile {
+
+  iconOnly = input(false)
   bibleReadingEngine = inject(BibleReadingEngine);
   user: UserEngine = inject(UserEngine);
   $users = toSignal(this.user.getUsers());
