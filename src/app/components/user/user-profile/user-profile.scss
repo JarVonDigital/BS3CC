@@ -43,11 +43,16 @@
       flex-direction: column;
       overflow: hidden;
 
+      .user-profile {}
+      .settings {
+
+      }
+
       .avatars {
         display: flex;
         flex-wrap: nowrap;
         overflow: auto;
-        width: calc(100% + 1rem);
+        width: calc(100%);
       }
 
       h3 {

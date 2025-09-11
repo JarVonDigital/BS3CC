@@ -1,6 +1,6 @@
 import {Component, computed, inject, signal} from '@angular/core';
 import { Avatar } from 'primeng/avatar';
-import { UserEngine } from '../../services/user.engine';
+import { UserEngine } from '../../../services/user.engine';
 import { AvatarGroup } from 'primeng/avatargroup';
 import { DatePipe } from '@angular/common';
 import { toSignal } from '@angular/core/rxjs-interop';
@@ -10,7 +10,8 @@ import { fromBlob } from 'image-resize-compress';
 import {ProgressSpinner} from 'primeng/progressspinner';
 import {Message} from 'primeng/message';
 import {ProgressBar} from 'primeng/progressbar';
-import {BibleReadingEngine} from '../../services/bible-reading.engine';
+import {BibleReadingEngine} from '../../../services/bible-reading.engine';
+import {Button} from 'primeng/button';
 
 @Component({
   selector: 'app-user-profile',
@@ -23,6 +24,7 @@ import {BibleReadingEngine} from '../../services/bible-reading.engine';
     ProgressSpinner,
     Message,
     ProgressBar,
+    Button,
   ],
   templateUrl: './user-profile.html',
   styleUrl: './user-profile.scss'
@@ -72,5 +74,24 @@ export class UserProfile {
     };
 
     input.click();
+  }
+
+  /**
+   * Retrieves the username of the signed-in user. If a username is not available,
+   * extracts the prefix of the user's email (before the "@" symbol). Returns an
+   * empty string if no username or email is available.
+   *
+   * @return {string} The username of the signed-in user, email prefix, or an empty string.
+   */
+  getUserName(): string {
+    const userName = this.user.$signedInUser()?.displayName;
+    const email = this.user.$signedInUser()?.email;
+    if(userName) {
+      return userName;
+    }
+    if(email) {
+      return email.split('@')[0];
+    }
+    return "";
   }
 }

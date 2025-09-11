@@ -1,4 +1,4 @@
-import { ApplicationConfig, provideBrowserGlobalErrorListeners, provideZonelessChangeDetection } from '@angular/core';
+import { ApplicationConfig, provideBrowserGlobalErrorListeners, provideZonelessChangeDetection, isDevMode } from '@angular/core';
 import { provideRouter } from '@angular/router';
 
 import { routes } from './app.routes';
@@ -12,6 +12,7 @@ import {getFirestore, provideFirestore} from '@angular/fire/firestore';
 import {LogLevel, setLogLevel} from '@angular/fire';
 import {getStorage, provideStorage} from '@angular/fire/storage';
 import {DialogService} from 'primeng/dynamicdialog';
+import { provideServiceWorker } from '@angular/service-worker';
 
 setLogLevel(LogLevel.VERBOSE);
 
@@ -32,6 +33,12 @@ export const appConfig: ApplicationConfig = {
           darkModeSelector: false,
         }
       }
-    })
+    }), provideServiceWorker('ngsw-worker.js', {
+            enabled: !isDevMode(),
+            registrationStrategy: 'registerWhenStable:30000'
+          }), provideServiceWorker('ngsw-worker.js', {
+            enabled: !isDevMode(),
+            registrationStrategy: 'registerWhenStable:30000'
+          })
   ]
 };
