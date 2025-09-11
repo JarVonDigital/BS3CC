@@ -21,10 +21,10 @@
       fluid
       autoResize
       [spellcheck]="true"
-      [maxLength]="275"
+      [maxLength]="$maxLength()"
       formControlName="comment"></textarea>
 
-    <h4>{{form.getRawValue()?.comment?.length}} / 275 Characters</h4>
+    <h4>{{form.getRawValue()?.comment?.length}} / {{ $maxLength() }} Characters</h4>
 
     <p-button
       [disabled]="form.invalid"

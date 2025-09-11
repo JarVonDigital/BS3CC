@@ -1,12 +1,13 @@
-@if(items().length != 0) {
-  <p-carousel [value]="items()" [autoplayInterval]="7000" [numVisible]="1.5" [showNavigators]="false">
-    <ng-template #item let-item>
+<h2>Deep Dive <small>| Community Gems</small></h2>
+<swiper-container #swiper init="false">
+  @for (item of items(); track item.id) {
+    <swiper-slide>
       @let verse = item.chapter + ':' + item.verse + (item.throughVerse ? '-' + item.throughVerse : '');
       <p-card>
         <div class="header">{{getBook(item)?.name}} {{verse}}</div>
         <div class="comment">
           <h4>{{item.createdAt | date: 'short'}}</h4>
-            {{item.comment}}
+          {{item.comment}}
         </div>
         @if(item.userId === userEngine.$signedInUser()?.uid) {
           <div class="actions">
@@ -14,6 +15,6 @@
           </div>
         }
       </p-card>
-    </ng-template>
-  </p-carousel>
-}
+    </swiper-slide>
+  }
+</swiper-container>

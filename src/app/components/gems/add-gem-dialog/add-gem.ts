@@ -38,6 +38,7 @@ export class AddGem implements OnInit, OnDestroy {
 
   gem = input()
   reading = input();
+  $maxLength = signal(300)
 
   protected dialog = inject(DynamicDialogRef);
   protected fb = inject(FormBuilder);
@@ -48,7 +49,7 @@ export class AddGem implements OnInit, OnDestroy {
     chapter: this.fb.control(null, {validators: [Validators.required]}),
     verse: this.fb.control(null, {validators: [Validators.required]}),
     throughVerse: null,
-    comment: this.fb.control("", {validators: [Validators.required]})
+    comment: this.fb.control("", {validators: [Validators.required, Validators.maxLength(this.$maxLength())]})
   })
 
   ngOnInit() {
