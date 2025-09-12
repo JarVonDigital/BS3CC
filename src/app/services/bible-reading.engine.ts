@@ -25,7 +25,7 @@ import {
   where
 } from '@angular/fire/firestore';
 import {UserEngine} from './user.engine';
-import {from, map, Observable, of, switchMap} from 'rxjs';
+import {catchError, from, map, Observable, of, switchMap} from 'rxjs';
 
 export interface BibleReadingProgressObject {
   userId: string;
@@ -174,7 +174,9 @@ export class BibleReadingEngine {
 
   async getBibleBooks() {
     await runInInjectionContext(this.injector, async () => {
-      let q = query(this.bibleBooksCollection, orderBy('id', 'asc'))
+      let q = query(
+        this.bibleBooksCollection,
+        orderBy('id', 'asc'))
       let data = await getDocs(q);
       this.$bibleBooks.set(data.docs.map(d => d.data() as BibleBooks))
     })
@@ -194,6 +196,7 @@ export class BibleReadingEngine {
 
   getUserProgress(status: string): Observable<BibleReadingProgressObject[]> {
     return runInInjectionContext(this.injector, () => {
+      if (!this.user.$signedInUser()) return of([])
       const q = query(
         this.bibleReadingProgress,
         where('scheduleId', '==', 0),
@@ -202,7 +205,12 @@ export class BibleReadingEngine {
         where('progress', '==', status)
       )
       return collectionData(q) as Observable<BibleReadingProgressObject[]>
-    })
+    }).pipe(
+      catchError((err) => {
+        console.log(err)
+        return of([])
+      })
+    )
   }
 
   async updateProgress(scheduleId: number, groupId: number, day: number, progress: "PREPARING" | "READING" | "COMPLETE") {

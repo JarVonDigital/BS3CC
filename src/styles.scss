@@ -8,11 +8,13 @@
 
 html, body {
   font-family: "TASA Explorer", sans-serif;
+  touch-action: manipulation;
   margin: 0;
+  height: 100%;
+  overflow: hidden;
 }
 
 body {
-
   .container {
     display: flex;
     flex-direction: column;

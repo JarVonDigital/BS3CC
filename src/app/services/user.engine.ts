@@ -14,7 +14,7 @@ import {
   browserLocalPersistence, user, signOut, User,
   updateProfile, updatePhoneNumber, updateEmail, onAuthStateChanged
 } from '@angular/fire/auth';
-import {concat, from, interval, map, Observable, switchMap, timestamp} from 'rxjs';
+import {catchError, concat, from, interval, map, Observable, of, switchMap, timestamp} from 'rxjs';
 import {toSignal} from '@angular/core/rxjs-interop';
 import {
   collection,
@@ -80,6 +80,7 @@ export class UserEngine {
   );
 
   private runner = (cutoff: any) => {
+    if(!this.$signedInUser()) return of([]);
     return runInInjectionContext(this.injector, () => {
       return collectionData(query(this.userCollection))
         .pipe(
@@ -153,6 +154,7 @@ export class UserEngine {
    * @return {Promise<Array<Object>>} A promise that resolves to an array of user data objects for users who were active after the cutoff time.
    */
   private async fetchInitial(): Promise<Array<object>> {
+    if(!this.$signedInUser()) return [] as Array<object>;
     return runInInjectionContext(this.injector, async () => {
       const cutoff = DateTime.utc().minus({minutes: 1}).toISO();
       const snap = await getDocs(query(this.userCollection));
@@ -217,6 +219,10 @@ export class UserEngine {
     return runInInjectionContext(this.injector, () => {
       return collectionData(this.userCollection, {idField: 'id'}) as Observable<User[]>
     })
+      .pipe(catchError((err) => {
+        console.log(err)
+        return of([] as User[])
+      }))
 
   }
 

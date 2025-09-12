@@ -9,7 +9,6 @@ import { Tooltip } from 'primeng/tooltip';
 import { fromBlob } from 'image-resize-compress';
 import {ProgressSpinner} from 'primeng/progressspinner';
 import {Message} from 'primeng/message';
-import {ProgressBar} from 'primeng/progressbar';
 import {BibleReadingEngine} from '../../../services/bible-reading.engine';
 import {Button} from 'primeng/button';
 
@@ -23,7 +22,6 @@ import {Button} from 'primeng/button';
     Tooltip,
     ProgressSpinner,
     Message,
-    ProgressBar,
     Button,
   ],
   templateUrl: './user-profile.html',
