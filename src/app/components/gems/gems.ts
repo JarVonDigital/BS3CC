@@ -41,7 +41,7 @@ export class Gems implements AfterContentInit {
   swiper: SwiperOptions = {
     slidesPerView: 1.2,
     direction: "horizontal",
-    loop: true,
+    loop: false,
     autoplay: {
       delay: 7000,
       disableOnInteraction: true,

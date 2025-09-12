@@ -72,8 +72,8 @@ export class UserEngine {
   })
 
   // RxJS stream that emits every 30s (adjust to taste)
-  private cutoff$ = interval(6000).pipe(
-    map(() => DateTime.now().minus({minute: 2}).toISO()) // 2 min cutoff
+  private cutoff$ = interval(30000).pipe(
+    map(() => DateTime.now().minus({minute: 1}).toISO()) // 2 min cutoff
   );
 
   private runner = (cutoff: any) => {
@@ -144,7 +144,7 @@ export class UserEngine {
   })
 
   private async fetchInitial() {
-    const cutoff = DateTime.utc().minus({ minutes: 2 }).toISO();
+    const cutoff = DateTime.utc().minus({ minutes: 1 }).toISO();
     const snap = await getDocs(query(this.userCollection));
     return snap.docs.filter((user: any) => {
         if (!user.data().lastActive) return false;
