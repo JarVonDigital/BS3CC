@@ -1,0 +1,37 @@
+:host {
+  display: block;
+  background: rgb(245, 245, 245);
+
+  h2 {
+    margin: 0;
+    padding: 1rem 1.5rem 0 1.5rem;
+    font-size: 1rem;
+    color: rgb(140, 140, 140);
+    position: relative;
+
+    &:after {
+      position: absolute;
+      left: 0;
+      bottom: -8px;
+      content: "";
+      display: block;
+      width: calc(100% - 4rem);
+      margin: 0 2rem;
+      height: 1px;
+      background: rgb(220, 220, 220);
+      z-index: 2;
+    }
+  }
+
+  swiper-container {
+    background: transparent;
+
+    swiper-slide {
+      height: auto;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: .5rem 0 1rem 0;
+    }
+  }
+}

@@ -1,0 +1,26 @@
+:host {
+  .navigation {
+    display: flex;
+    flex-direction: column;
+    margin: 0;
+    li {
+      display: flex;
+      gap: 1rem;
+      list-style: none;
+      padding: 1rem;
+      h4 {
+        flex: 1;
+        margin: 0;
+      }
+
+      &.active {
+        background: var(--p-primary-50);
+
+        i {
+          color: var(--p-primary-700);
+          font-weight: 800;
+        }
+      }
+    }
+  }
+}

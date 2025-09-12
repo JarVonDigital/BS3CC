@@ -1,0 +1,13 @@
+<div class="navigation">
+  @for (item of menuItems; track item) {
+    <li
+      [routerLink]="item.routerLink"
+      [routerLinkActiveOptions]="item.routerLinkActiveOptions"
+      (click)="userEngine.$drawerToggle.set(false)"
+      routerLinkActive="active">
+      <i [class]="item.icon"></i>
+      <h4>{{ item.label }}</h4>
+      <i class="pi pi-angle-right"></i>
+    </li>
+  }
+</div>

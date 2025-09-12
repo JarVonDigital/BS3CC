@@ -10,6 +10,10 @@
   z-index: 1000;
 
   .title {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: .5rem;
     font-family: "Fredoka", sans-serif;
     margin: 0 1rem;
     font-size: 1rem;
@@ -44,4 +48,5 @@
       font-size: .7rem;
     }
   }
+
 }

@@ -18,7 +18,7 @@ import {InputNumber} from "primeng/inputnumber";
 import {FormBuilder, ReactiveFormsModule, Validators} from "@angular/forms";
 import {Select} from "primeng/select";
 import {Textarea} from "primeng/textarea";
-import {BibleReadingEngine, BibleReadingRef} from '../../../services/bible-reading.engine';
+import {BibleReadingEngine, BibleReadingRef} from '../../../../services/bible-reading.engine';
 import {DialogService, DynamicDialogConfig, DynamicDialogRef} from 'primeng/dynamicdialog';
 
 @Component({

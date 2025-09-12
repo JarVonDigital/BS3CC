@@ -1,0 +1,12 @@
+:host {
+  display: block;
+  position: relative;
+  .search {
+    top: calc(60px);
+    position: sticky;
+    padding: 1rem;
+    z-index: 100;
+    background: rgba(255, 255, 255, .5);
+    backdrop-filter: blur(10px);
+  }
+}

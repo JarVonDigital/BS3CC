@@ -48,6 +48,9 @@ export class UserEngine {
   firestore = inject(Firestore)
   injector = inject(EnvironmentInjector);
   dialogService = inject(DialogService)
+
+  $drawerToggle = signal(false);
+
   userCollection = collection(this.firestore, 'users');
   $refreshUser = signal(false);
   $userDocRef = computed(() => doc(this.userCollection, this.$signedInUser()?.uid))
@@ -72,8 +75,8 @@ export class UserEngine {
   })
 
   // RxJS stream that emits every 30s (adjust to taste)
-  private cutoff$ = interval(6000).pipe(
-    map(() => DateTime.now().minus({minute: 2}).toISO()) // 2 min cutoff
+  private cutoff$ = interval(30000).pipe(
+    map(() => DateTime.now().minus({minute: 1}).toISO()) // 2 min cutoff
   );
 
   private runner = (cutoff: any) => {
@@ -106,8 +109,8 @@ export class UserEngine {
     {initialValue: []}
   );
 
-  // Optional: computed signal for just user names
-  $activeUids = computed(() => this.$activeUsers().map(u => u['uid']));
+  // Optional: computed signal for just usernames
+  $activeUids = computed(() => this.$activeUsers().map((u: any) => u.uid));
 
   /**
    * Effect function to update the user database with the signed-in user's information.
@@ -143,15 +146,23 @@ export class UserEngine {
     })
   })
 
-  private async fetchInitial() {
-    const cutoff = DateTime.utc().minus({ minutes: 2 }).toISO();
-    const snap = await getDocs(query(this.userCollection));
-    return snap.docs.filter((user: any) => {
+  /**
+   * Fetches the initial set of user data based on a specific cutoff time.
+   * Filters out users who were last active before the cutoff.
+   *
+   * @return {Promise<Array<Object>>} A promise that resolves to an array of user data objects for users who were active after the cutoff time.
+   */
+  private async fetchInitial(): Promise<Array<object>> {
+    return runInInjectionContext(this.injector, async () => {
+      const cutoff = DateTime.utc().minus({minutes: 1}).toISO();
+      const snap = await getDocs(query(this.userCollection));
+      return snap.docs.filter((user: any) => {
         if (!user.data().lastActive) return false;
         const lastActive = DateTime.fromISO(user.data().lastActive);
         const lastCutoff = DateTime.fromISO(cutoff);
         return lastActive.toMillis() > lastCutoff.toMillis();
-    }).map((user: any) => user.data());
+      }).map((user: any) => user.data());
+    })
   }
 
   private async setOnline(user: User) {
@@ -175,15 +186,20 @@ export class UserEngine {
 
   }
 
-  async startHeartbeat(user: User) {
-    await runInInjectionContext(this.injector, async () => {
-      setInterval(async () => {
+  /**
+   * Starts a heartbeat mechanism that periodically updates the user's last active timestamp in the database.
+   *
+   * @param {User} user - The user object associated with the heartbeat functionality.
+   * @return {Promise<void>} A promise that resolves when the heartbeat mechanism is started successfully.
+   */
+  async startHeartbeat(user: User): Promise<void> {
+    setInterval(() => {
+      runInInjectionContext(this.injector, async () => {
         await updateDoc(this.$userDocRef(), {
           lastActive: DateTime.utc().toISO()
         });
-      }, 60000); // every 60s
-    })
-
+      })
+    }, 60000); // every 60s
   }
 
   openSettingsDialog() {

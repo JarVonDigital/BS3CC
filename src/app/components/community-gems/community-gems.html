@@ -1,0 +1,13 @@
+<div class="search">
+    <p-fluid>
+      <p-icon-field>
+        <p-inputicon class="pi pi-search"></p-inputicon>
+        <input [disabled]="true" placeholder="Coming Soon" pInputText type="text" [autocomplete]="false" [spellcheck]="false">
+      </p-icon-field>
+    </p-fluid>
+</div>
+<div class="gems">
+  @for (item of gems(); track item.id) {
+    <app-gem-card [item]="item"></app-gem-card>
+  }
+</div>

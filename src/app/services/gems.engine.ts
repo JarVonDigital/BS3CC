@@ -1,7 +1,7 @@
 import {inject, Injectable} from '@angular/core';
 import {DialogService, DynamicDialogRef} from 'primeng/dynamicdialog';
 import {FormBuilder, Validators} from '@angular/forms';
-import {AddGem} from '../components/gems/add-gem-dialog/add-gem';
+import {AddGem} from '../components/community-gems/gems/add-gem-dialog/add-gem';
 
 @Injectable({
   providedIn: 'root'

@@ -8,7 +8,7 @@ import {BibleReadingCard} from './bible-reading-card/bible-reading-card';
 import {UserProfile} from '../user/user-profile/user-profile';
 import {DatePicker} from 'primeng/datepicker';
 import {DateTime} from 'luxon';
-import {Gems} from '../gems/gems';
+import {Gems} from '../community-gems/gems/gems';
 
 @Component({
   selector: 'app-bible-reading',

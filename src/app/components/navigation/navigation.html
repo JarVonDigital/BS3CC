@@ -1,19 +1,32 @@
- <div class="title">BS3CC</div>
-  <div class="right">
-    <h4 class="date-time">{{bibleReadingEngine.$currentDate().toJSDate() | date: 'MMM, d | h:mm a'}}</h4>
-    @if(userEngine.$signedInUser()) {
-      <p-avatar
-        shape="circle"
-        [label]="userEngine.$signedInUser()?.photoURL ? undefined : userEngine.$signedInUser()?.email?.[0] ?? ''"
-        [image]="userEngine.$signedInUser()?.photoURL ?? undefined"
-        (click)="popover.toggle($event)"></p-avatar>
-      <p-popover #popover>
-        <p-button fluid label="Logout" (onClick)="userEngine.onLogout()"></p-button>
-      </p-popover>
-    } @else {
-      <p-button rounded text icon="pi pi-user" size="small" (click)="popover.toggle($event)"></p-button>
-      <p-popover #popover>
-        <app-login></app-login>
-      </p-popover>
-    }
-  </div>
+<div class="title">
+  <p-button text icon="pi pi-bars" (click)="toggleMenu()"></p-button>
+  BS3CC
+
+  <p-drawer #DrawerRef appendTo="body" styleClass="drawer" [(visible)]="userEngine.$drawerToggle" closable="true">
+    <ng-template #headless>
+      <app-menu [drawerRef]="DrawerRef"></app-menu>
+    </ng-template>
+  </p-drawer>
+
+</div>
+
+<div class="right">
+  <h4 class="date-time">{{ bibleReadingEngine.$currentDate().toJSDate() | date: 'MMM, d | h:mm a' }}</h4>
+  @if (userEngine.$signedInUser()) {
+    <p-avatar
+      shape="circle"
+      [label]="userEngine.$signedInUser()?.photoURL ? undefined : userEngine.$signedInUser()?.email?.[0] ?? ''"
+      [image]="userEngine.$signedInUser()?.photoURL ?? undefined"
+      (click)="popover.toggle($event)"></p-avatar>
+    <p-popover #popover>
+      <p-button fluid label="Logout" (onClick)="userEngine.onLogout()"></p-button>
+    </p-popover>
+  } @else {
+    <p-button rounded text icon="pi pi-user" size="small" (click)="popover.toggle($event)"></p-button>
+    <p-popover #popover>
+      <app-login></app-login>
+    </p-popover>
+  }
+</div>
+
+

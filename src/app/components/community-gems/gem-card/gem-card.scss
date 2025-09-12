@@ -1,0 +1,50 @@
+:host {
+  height: 100%;
+  p-card {
+    height: 100%;
+    transform: scale(.9);
+    display: flex;
+
+    ::ng-deep {
+      .p-card-body, .p-card-content {
+        display: flex;
+        flex-direction: column;
+        flex: 1;
+      }
+    }
+
+    .scrollable-content {
+      overflow: auto; // enable vertical scrolling
+    }
+
+    .header {
+      font-size: 1rem;
+      font-weight: bold;
+    }
+
+    h4 {
+      margin: .2rem 0 .5rem 0;
+      font-size: .7rem;
+    }
+
+    .comment {
+      display: flex;
+      flex-direction: column;
+      max-height: 200px;
+      overflow: auto;
+      flex: 1;
+
+      textarea {
+        flex: 1;
+      }
+    }
+
+    .actions {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      margin: 1rem 0 0 0;
+      gap: .5rem;
+    }
+  }
+}

@@ -1,0 +1,8 @@
+<h2>Deep Dive <small>| Community Gems</small></h2>
+<swiper-container #swiper init="false">
+  @for (item of items(); track item.id) {
+    <swiper-slide>
+      <app-gem-card [item]="item"></app-gem-card>
+    </swiper-slide>
+  }
+</swiper-container>
