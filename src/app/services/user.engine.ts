@@ -12,9 +12,9 @@ import {
   signInWithEmailAndPassword,
   setPersistence,
   browserLocalPersistence, user, signOut, User,
-  updateProfile, updatePhoneNumber, updateEmail
+  updateProfile, updatePhoneNumber, updateEmail, onAuthStateChanged
 } from '@angular/fire/auth';
-import {from, Observable} from 'rxjs';
+import {concat, from, interval, map, Observable, switchMap, timestamp} from 'rxjs';
 import {toSignal} from '@angular/core/rxjs-interop';
 import {
   collection,
@@ -23,13 +23,16 @@ import {
   docData,
   Firestore,
   getDoc,
-  getDocs,
+  getDocs, query,
+  serverTimestamp,
   setDoc,
-  updateDoc
+  Timestamp,
+  updateDoc, where
 } from '@angular/fire/firestore';
 import {getDownloadURL, getStorage, ref, uploadBytes} from '@angular/fire/storage';
 import {DialogService} from 'primeng/dynamicdialog';
 import {Settings} from '../components/user/settings/settings';
+import {DateTime} from 'luxon';
 
 export interface UserLoginForm {
   email: string;
@@ -48,7 +51,14 @@ export class UserEngine {
   userCollection = collection(this.firestore, 'users');
   $refreshUser = signal(false);
   $userDocRef = computed(() => doc(this.userCollection, this.$signedInUser()?.uid))
+
   $signedInUser: Signal<User | null | undefined> = toSignal(from(user(this.auth)));
+  $userEffect = effect(async () => {
+    await this.setOnline(this.$signedInUser()!)
+    await this.startHeartbeat(this.$signedInUser()!)
+  })
+
+
   $user = computed(async () => {
     return await runInInjectionContext(this.injector, async () => {
       this.$refreshUser(); // Register
@@ -60,6 +70,45 @@ export class UserEngine {
       })
     })
   })
+
+  // RxJS stream that emits every 30s (adjust to taste)
+  private cutoff$ = interval(6000).pipe(
+    map(() => DateTime.now().minus({minute: 2}).toISO()) // 2 min cutoff
+  );
+
+  private runner = (cutoff: any) => {
+    return runInInjectionContext(this.injector, () => {
+      return collectionData(query(this.userCollection))
+        .pipe(
+          map((users) => {
+            return users.filter((user: any) => {
+              if (!user.lastActive) return false;
+              const lastActive = DateTime.fromISO(user.lastActive);
+              const lastCutoff = DateTime.fromISO(cutoff);
+              return lastActive.toMillis() > lastCutoff.toMillis();
+            });
+          })
+        );
+    })
+  }
+
+  $activeUsers = toSignal(
+    from(this.fetchInitial()).pipe(
+      switchMap((def) => concat(
+        from(this.fetchInitial()),
+        this.cutoff$.pipe(
+          switchMap(
+            (cutoff) => this.runner(cutoff)
+          )
+        )
+      ))
+    ),
+    {initialValue: []}
+  );
+
+  // Optional: computed signal for just user names
+  $activeUids = computed(() => this.$activeUsers().map(u => u['uid']));
+
   /**
    * Effect function to update the user database with the signed-in user's information.
    *
@@ -93,6 +142,49 @@ export class UserEngine {
       }
     })
   })
+
+  private async fetchInitial() {
+    const cutoff = DateTime.utc().minus({ minutes: 2 }).toISO();
+    const snap = await getDocs(query(this.userCollection));
+    return snap.docs.filter((user: any) => {
+        if (!user.data().lastActive) return false;
+        const lastActive = DateTime.fromISO(user.data().lastActive);
+        const lastCutoff = DateTime.fromISO(cutoff);
+        return lastActive.toMillis() > lastCutoff.toMillis();
+    }).map((user: any) => user.data());
+  }
+
+  private async setOnline(user: User) {
+    await runInInjectionContext(this.injector, async () => {
+      if (!user) return;
+      await updateDoc(this.$userDocRef(), {
+        isOnline: true,
+        lastActive: DateTime.utc().toISO()
+      });
+    })
+
+  }
+
+  async setOffline(user: User) {
+    await runInInjectionContext(this.injector, async () => {
+      await updateDoc(this.$userDocRef(), {
+        isOnline: false,
+        lastActive: DateTime.utc().toISO()
+      });
+    })
+
+  }
+
+  async startHeartbeat(user: User) {
+    await runInInjectionContext(this.injector, async () => {
+      setInterval(async () => {
+        await updateDoc(this.$userDocRef(), {
+          lastActive: DateTime.utc().toISO()
+        });
+      }, 60000); // every 60s
+    })
+
+  }
 
   openSettingsDialog() {
     this.dialogService.open(Settings, {
@@ -136,6 +228,7 @@ export class UserEngine {
   }
 
   async onLogout() {
+    await this.setOffline(this.$signedInUser()!)
     await signOut(this.auth)
   }
 

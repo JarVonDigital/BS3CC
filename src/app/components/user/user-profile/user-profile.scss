@@ -54,6 +54,15 @@
         flex-wrap: nowrap;
         overflow: auto;
         width: calc(100%);
+
+        p-avatar {
+          position: relative;
+          &.user-active {
+            border-color: #56cf56;
+            animation: pulse 1s infinite;
+          }
+        }
+
       }
 
       h3 {
@@ -73,5 +82,19 @@
     }
 
 
+  }
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(.9);
+  }
+
+  100% {
+    transform: scale(1);
   }
 }

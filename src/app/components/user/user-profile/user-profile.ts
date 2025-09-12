@@ -33,8 +33,8 @@ export class UserProfile {
 
   iconOnly = input(false)
   bibleReadingEngine = inject(BibleReadingEngine);
-  user: UserEngine = inject(UserEngine);
-  $users = toSignal(this.user.getUsers());
+  userEngine: UserEngine = inject(UserEngine);
+  $users = toSignal(this.userEngine.getUsers());
   $progress = toSignal(this.bibleReadingEngine.getUserProgress('COMPLETE'))
   $completed = computed(() => {
     return this.$progress()?.length ?? 0;
@@ -60,13 +60,13 @@ export class UserProfile {
         const resizedBlob = await fromBlob(file, 80, 'auto', 'auto', 'jpeg');
 
         // 🔹 Upload to Firebase Storage
-        const photoURL = await this.user.uploadImage(
+        const photoURL = await this.userEngine.uploadImage(
           resizedBlob,
-          `${this.user.$signedInUser()?.uid}/profile/${file.name}`
+          `${this.userEngine.$signedInUser()?.uid}/profile/${file.name}`
         );
 
         // 🔹 Update Firebase Auth profile
-        await this.user.updateProfilePhoto({ photoURL });
+        await this.userEngine.updateProfilePhoto({ photoURL });
         this.$isUpdatingAvatar.set(false);
         console.log('✅ Profile photo updated:', photoURL);
       } catch (err) {
@@ -86,8 +86,8 @@ export class UserProfile {
    * @return {string} The username of the signed-in user, email prefix, or an empty string.
    */
   getUserName(): string {
-    const userName = this.user.$signedInUser()?.displayName;
-    const email = this.user.$signedInUser()?.email;
+    const userName = this.userEngine.$signedInUser()?.displayName;
+    const email = this.userEngine.$signedInUser()?.email;
     if(userName) {
       return userName;
     }

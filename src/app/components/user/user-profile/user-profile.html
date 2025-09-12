@@ -1,4 +1,4 @@
-@if (user.$signedInUser()) {
+@if (userEngine.$signedInUser()) {
 
   @if (!iconOnly()) {
     <div class="messages">
@@ -22,8 +22,8 @@
           size="xlarge"
           shape="circle"
           [style]="{height: '8rem', width: '8rem'}"
-          [icon]="user.$signedInUser()?.photoURL ? undefined : 'pi pi-user'"
-          [image]="user.$signedInUser()?.photoURL ?? undefined"
+          [icon]="userEngine.$signedInUser()?.photoURL ? undefined : 'pi pi-user'"
+          [image]="userEngine.$signedInUser()?.photoURL ?? undefined"
           (click)="updateProfileImage()">
         </p-avatar>
       }
@@ -37,10 +37,10 @@
           <div class="flex with-space">
             <div class="user-profile">
               <h2>{{ getUserName() }}</h2>
-              <h4>Joined: {{ user.$signedInUser()?.metadata?.creationTime | date: 'MMM, d, y' }}</h4>
+              <h4>Joined: {{ userEngine.$signedInUser()?.metadata?.creationTime | date: 'MMM, d, y' }}</h4>
             </div>
             <div class="settings">
-              <p-button rounded text icon="pi pi-cog" (click)="user.openSettingsDialog()"></p-button>
+              <p-button rounded text icon="pi pi-cog" (click)="userEngine.openSettingsDialog()"></p-button>
             </div>
           </div>
           <p-divider></p-divider>
@@ -52,6 +52,7 @@
             @for (user of $users(); track user.uid) {
               <p-avatar
                 size="large"
+                [class]="{'user-active': userEngine.$activeUids().includes(user.uid)}"
                 [label]="user.photoURL ? undefined : user.email?.[0]"
                 [pTooltip]="user.email ?? undefined"
                 [image]="user.photoURL ?? undefined"
