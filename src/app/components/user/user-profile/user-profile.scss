@@ -57,8 +57,10 @@
 
         p-avatar {
           position: relative;
+          transition: all .2s ease-in-out;
+
           &.user-active {
-            border-color: #56cf56;
+            border-color: #5fb15f;
             animation: pulse 1s infinite;
           }
         }
@@ -66,7 +68,7 @@
       }
 
       h3 {
-        margin: 0rem 0 .5rem 0;
+        margin: 0 0 .5rem 0;
         font-size: 1rem;
         text-align: left;
         color: var(--p-primary-700);
@@ -88,13 +90,16 @@
 @keyframes pulse {
   0% {
     transform: scale(1);
+    border-color: #5fb15f;
   }
 
   50% {
     transform: scale(.9);
+    border-color: #79d379;
   }
 
   100% {
     transform: scale(1);
+    border-color: #5fb15f;
   }
 }

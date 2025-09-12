@@ -7,7 +7,7 @@
   </div>
   @if(item().userId === userEngine.$signedInUser()?.uid) {
     <div class="actions">
-      <p-button icon="pi pi-pen-to-square" (click)="gemsEngine.openExistingGemsDialog(item)"></p-button>
+      <p-button icon="pi pi-pen-to-square" (click)="gemsEngine.openExistingGemsDialog(item())"></p-button>
     </div>
   }
 </p-card>
