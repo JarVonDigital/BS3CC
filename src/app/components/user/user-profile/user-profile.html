@@ -1,15 +1,6 @@
 @if (userEngine.$signedInUser()) {
-
-<!--  @if (iconOnly()) {-->
-<!--    <div class="messages">-->
-<!--      <p-message size="small" severity="secondary">-->
-<!--        Profile pictures must be in JPEG format-->
-<!--      </p-message>-->
-<!--    </div>-->
-<!--  }-->
-
   <div class="main">
-    <div class="user-profile" [@slideIn]>
+    <div class="user-profile">
       <i class="pi pi-camera"></i>
       @if ($isUpdatingAvatar()) {
         <p-avatar

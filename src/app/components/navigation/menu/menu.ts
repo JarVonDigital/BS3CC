@@ -28,6 +28,12 @@ export class Menu {
       label: 'Community Gems',
       routerLink: ['/gems'],
       routerLinkActiveOptions: {exact: true}
+    },
+    {
+      icon: 'pi pi-calendar-plus',
+      label: 'Schedule Creator',
+      routerLink: ['/schedule'],
+      routerLinkActiveOptions: {exact: true}
     }
   ]
 }

@@ -1,5 +1,5 @@
 import {
-  computed,
+  computed, effect,
   EnvironmentInjector,
   inject,
   Injectable,
@@ -9,23 +9,20 @@ import {
   WritableSignal
 } from '@angular/core';
 import {DateTime} from 'luxon';
-import {BibleReadingSchedule} from '../data/br.schedule.data';
 import {
   addDoc,
   collection,
   collectionData,
   doc,
-  docData,
   Firestore,
   getDocs,
-  getDocsFromServer,
   orderBy,
   query,
   setDoc, updateDoc,
   where
 } from '@angular/fire/firestore';
 import {UserEngine} from './user.engine';
-import {catchError, from, map, Observable, of, switchMap} from 'rxjs';
+import {catchError, map, Observable, of} from 'rxjs';
 
 export interface BibleReadingProgressObject {
   userId: string;
@@ -46,7 +43,7 @@ export interface BibleBooks {
 
 export interface BibleReadingRef {
   day: number
-  date: DateTime
+  date: DateTime | string
   scheduleId: number
   reading: {
     bookId: number
@@ -78,6 +75,9 @@ export class BibleReadingEngine {
   $bibleReadingStartDate = signal(DateTime.fromISO('2025-09-08').startOf('day'));
 
   $bibleBooks: WritableSignal<BibleBooks[]> = signal([] as BibleBooks[]);
+  $bibleBookEffect = effect(() => {
+
+  })
 
   $bibleReadingSchedules: WritableSignal<BibleReadingScheduleRef[]> = signal([]);
   $bibleReadingSchedule: Signal<BibleReadingRef[]> = computed(() => {
@@ -112,15 +112,97 @@ export class BibleReadingEngine {
     }, 100);
   }
 
-  private async updateSchedule() {
-    await runInInjectionContext(this.injector, async () => {
-      let d = doc(this.bibleReadingSchedules, '0')
-      await setDoc(d, {
-        scheduleId: 0,
-        schedule: BibleReadingSchedule.readings
-      })
-    })
+  constructSchedule(
+    startDate: string,
+    months: number,
+    lingerBooks: number[] = [],
+    lingerFactor = 2
+  ) {
+    const books = this.$bibleBooks();
+    if (books.length === 0) return [];
+
+    const start = DateTime.fromISO(startDate);
+    const end = start.plus({ months });
+    const countToDays = Math.max(end.diff(start, "days").days, 0);
+
+    // --- Step 1: Weighted total chapters ---
+    const totalWeightedChapters = books.reduce((sum, b) => {
+      return sum + (lingerBooks.includes(b.id) ? b.chapters * lingerFactor : b.chapters);
+    }, 0);
+
+    // --- Step 2: Daily weighted quota ---
+    const baseWeightedPerDay = Math.floor(totalWeightedChapters / countToDays);
+    let extraQuotaDays = totalWeightedChapters % countToDays;
+
+    // --- Step 3: Initialize schedule days ---
+    const schedule: BibleReadingRef[] = Array.from({ length: countToDays }, (_, i) => ({
+      day: i + 1,
+      date: start.plus({ days: i }),
+      scheduleId: 1,
+      reading: [],
+    }));
+
+    // --- Step 4: Walk through books sequentially ---
+    let bookIndex = 0;
+    let currentChapter = 1;
+
+    for (let day = 0; day < countToDays && bookIndex < books.length; day++) {
+      let todayQuota = baseWeightedPerDay + (extraQuotaDays > 0 ? 1 : 0);
+      if (extraQuotaDays > 0) extraQuotaDays--;
+
+      while (todayQuota > 0 && bookIndex < books.length) {
+        const book = books[bookIndex];
+        const isLinger = lingerBooks.includes(book.id);
+        const weightPerChapter = isLinger ? lingerFactor : 1;
+
+        const remainingChapters = book.chapters - currentChapter + 1;
+
+        // How many chapters fit into today’s quota
+        let canTake = Math.floor(todayQuota / weightPerChapter);
+        if (canTake > remainingChapters) canTake = remainingChapters;
+
+        // If quota too small for even one chapter, stop for today
+        if (canTake <= 0) break;
+
+        schedule[day].reading.push({
+          bookId: book.id,
+          fromChapter: currentChapter,
+          toChapter: currentChapter + canTake - 1,
+        });
+
+        // Update counters
+        currentChapter += canTake;
+        todayQuota -= canTake * weightPerChapter;
+
+        // Finished this book → move forward
+        if (currentChapter > book.chapters) {
+          bookIndex++;
+          currentChapter = 1;
+        }
+      }
+    }
+
+    // --- Step 5: If we run out of days, append remaining chapters to last day ---
+    if (bookIndex < books.length) {
+      let lastDay = schedule[schedule.length - 1];
+      while (bookIndex < books.length) {
+        const book = books[bookIndex];
+        lastDay.reading.push({
+          bookId: book.id,
+          fromChapter: currentChapter,
+          toChapter: book.chapters,
+        });
+        bookIndex++;
+        currentChapter = 1;
+      }
+    }
+
+    return schedule;
   }
+
+
+
+
 
   async getSchedules() {
     await runInInjectionContext(this.injector, async () => {

@@ -1,0 +1,24 @@
+<div class="form">
+  <div class="options">
+    <p-float-label variant="in">
+      <p-date-picker [(ngModel)]="$startDate"></p-date-picker>
+      <label>Schedule Start</label>
+    </p-float-label>
+    <p-float-label variant="in">
+      <p-input-number [(ngModel)]="$months"></p-input-number>
+      <label>Length (Months)</label>
+    </p-float-label>
+  </div>
+
+  <p-float-label variant="in">
+    <p-multi-select fluid [showClear]="true" [(ngModel)]="$linger" [options]="bibleReadingEngine.$bibleBooks()" optionValue="id"
+                    optionLabel="name"></p-multi-select>
+    <label>Linger on Specific Books</label>
+  </p-float-label>
+  <p-button label="Create" fluid
+            (click)="$schedule.set(bibleReadingEngine.constructSchedule($startDate().toISOString(), $months() ?? 12, $linger()))"></p-button>
+</div>
+
+@for (reading of $schedule(); track reading.day) {
+  <app-bible-reading-card [$reading]="reading"></app-bible-reading-card>
+}
