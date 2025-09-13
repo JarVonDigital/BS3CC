@@ -18,7 +18,7 @@
     }
   </div>
 
-  @if (userEngine.$signedInUser()) {
+  @if (userEngine.$signedInUser() && !$preview()) {
     @let
     progressPercentage = $progress()?.progress === 'PREPARING' ? Math.round(100 * 1 / 3) : $progress()?.progress === 'READING' ? Math.round(100 * 2 / 3) : $progress()?.progress === 'COMPLETE' ? Math.round(100 * 3 / 3) : Math.round(100 * 1 / 3);
     <div class="progress">

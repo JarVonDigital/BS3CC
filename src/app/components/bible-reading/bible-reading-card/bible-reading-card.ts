@@ -36,6 +36,7 @@ import {GemsEngine} from '../../../services/gems.engine';
 })
 export class BibleReadingCard {
 
+  $preview = input(false)
   $header: InputSignal<any> = input();
   $reading: InputSignal<BibleReadingRef> = input.required();
   $getDialogVisible = signal(false);
