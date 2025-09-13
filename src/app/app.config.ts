@@ -3,7 +3,6 @@ import { provideRouter } from '@angular/router';
 
 import { routes } from './app.routes';
 import {providePrimeNG} from 'primeng/config';
-import Aura from '@primeuix/themes/aura'
 import {provideAnimations} from '@angular/platform-browser/animations';
 import {environment} from '../environments/environment';
 import {initializeApp, provideFirebaseApp} from '@angular/fire/app';
@@ -13,6 +12,7 @@ import {LogLevel, setLogLevel} from '@angular/fire';
 import {getStorage, provideStorage} from '@angular/fire/storage';
 import {DialogService} from 'primeng/dynamicdialog';
 import { provideServiceWorker } from '@angular/service-worker';
+import {MyTheme} from './theme/theme';
 
 setLogLevel(LogLevel.VERBOSE);
 
@@ -28,7 +28,7 @@ export const appConfig: ApplicationConfig = {
     provideStorage(() => getStorage()),
     providePrimeNG({
       theme: {
-        preset: Aura,
+        preset: MyTheme,
         options: {
           darkModeSelector: false,
         }
