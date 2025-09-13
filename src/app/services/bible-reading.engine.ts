@@ -43,7 +43,7 @@ export interface BibleBooks {
 
 export interface BibleReadingRef {
   day: number
-  date: DateTime | string
+  date: DateTime
   scheduleId: number
   reading: {
     bookId: number

@@ -7,11 +7,10 @@ import {InputGroup} from 'primeng/inputgroup';
 import {FloatLabel} from 'primeng/floatlabel';
 import {Button} from 'primeng/button';
 import {Divider} from 'primeng/divider';
-import {AsyncPipe, JsonPipe} from '@angular/common';
 import {toSignal} from '@angular/core/rxjs-interop';
 import {from} from 'rxjs';
 import {UserProfile} from '../user-profile/user-profile';
-import {DialogService, DynamicDialogRef} from 'primeng/dynamicdialog';
+import { DynamicDialogRef} from 'primeng/dynamicdialog';
 
 @Component({
   selector: 'app-settings',
@@ -23,8 +22,6 @@ import {DialogService, DynamicDialogRef} from 'primeng/dynamicdialog';
     FloatLabel,
     Button,
     Divider,
-    JsonPipe,
-    AsyncPipe,
     UserProfile
   ],
   templateUrl: './settings.html',

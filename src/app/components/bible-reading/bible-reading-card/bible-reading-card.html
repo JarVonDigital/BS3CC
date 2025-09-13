@@ -1,6 +1,6 @@
 <p-card>
   <div class="header">
-    <b>{{$header () ?? ($reading().date!.toISODate() | date: 'E, MMM d')}}</b>
+    <b>{{$header () ?? ($reading().date?.toISODate() | date: 'E, MMM d')}}</b>
     <small>Bible Reading</small>
   </div>
   <div class="readings">
