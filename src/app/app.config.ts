@@ -13,12 +13,14 @@ import {getStorage, provideStorage} from '@angular/fire/storage';
 import {DialogService} from 'primeng/dynamicdialog';
 import { provideServiceWorker } from '@angular/service-worker';
 import {MyTheme} from './theme/theme';
+import {ConfirmationService} from 'primeng/api';
 
 setLogLevel(LogLevel.VERBOSE);
 
 export const appConfig: ApplicationConfig = {
   providers: [
     DialogService,
+    ConfirmationService,
     provideBrowserGlobalErrorListeners(),
     provideRouter(routes),
     provideAnimations(),

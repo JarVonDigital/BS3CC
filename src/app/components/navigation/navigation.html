@@ -29,8 +29,12 @@
           [label]="userEngine.$signedInUser()?.photoURL ? undefined : userEngine.$signedInUser()?.email?.[0] ?? ''"
           [image]="userEngine.$signedInUser()?.photoURL ?? undefined"
           (click)="popover.toggle($event)"></p-avatar>
-        <p-popover #popover>
-          <p-button fluid label="Logout" (onClick)="userEngine.onLogout()"></p-button>
+        <p-popover #popover >
+          <div class="links" [style]="{display: 'flex', flexDirection: 'column', gap: '.5rem'}">
+            <p-button fluid outlined size="small" icon="pi pi-download" label="Check For Updates" (onClick)="userEngine.checkForUpdates()"></p-button>
+            <p-button fluid outlined size="small" label="Logout" (onClick)="userEngine.onLogout()"></p-button>
+            <p-dialog></p-dialog>
+          </div>
         </p-popover>
       } @else {
         <p-button rounded text icon="pi pi-user" size="small" (click)="popover.toggle($event)"></p-button>
@@ -45,6 +49,4 @@
     <app-menu [$orientation]="'horizontal'"></app-menu>
   </div>
 }
-
-
 

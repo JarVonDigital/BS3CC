@@ -13,6 +13,8 @@ import {MegaMenu} from 'primeng/megamenu';
 import {Fluid} from 'primeng/fluid';
 import {RouterLink, RouterLinkActive} from '@angular/router';
 import {Menu} from './menu/menu';
+import {ConfirmDialog} from 'primeng/confirmdialog';
+import {Dialog} from 'primeng/dialog';
 
 @Component({
   selector: 'app-navigation',
@@ -24,7 +26,9 @@ import {Menu} from './menu/menu';
     Popover,
     Login,
     Drawer,
-    Menu
+    Menu,
+    ConfirmDialog,
+    Dialog
   ],
   templateUrl: './navigation.html',
   styleUrl: './navigation.scss'

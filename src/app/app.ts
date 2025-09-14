@@ -11,7 +11,7 @@ import {ConfirmDialog} from 'primeng/confirmdialog';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, Menubar, DatePipe, Navigation, Footer, ConfirmDialog],
+  imports: [RouterOutlet, Navigation, Footer, ConfirmDialog],
   templateUrl: './app.html',
   styleUrl: './app.scss',
   providers: [ConfirmationService]

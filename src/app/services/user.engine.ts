@@ -5,14 +5,14 @@ import {
   inject,
   Injectable,
   runInInjectionContext, signal,
-  Signal, untracked,
+  Signal,
 } from '@angular/core';
 import {
   Auth,
   signInWithEmailAndPassword,
   setPersistence,
   browserLocalPersistence, user, signOut, User,
-  updateProfile, updatePhoneNumber, updateEmail, onAuthStateChanged
+  updateProfile, updateEmail
 } from '@angular/fire/auth';
 import {catchError, concat, from, interval, map, Observable, of, switchMap, timestamp} from 'rxjs';
 import {toSignal} from '@angular/core/rxjs-interop';
@@ -20,19 +20,18 @@ import {
   collection,
   collectionData,
   doc,
-  docData,
   Firestore,
   getDoc,
   getDocs, query,
-  serverTimestamp,
   setDoc,
-  Timestamp,
-  updateDoc, where
+  updateDoc
 } from '@angular/fire/firestore';
 import {getDownloadURL, getStorage, ref, uploadBytes} from '@angular/fire/storage';
 import {DialogService} from 'primeng/dynamicdialog';
 import {Settings} from '../components/user/settings/settings';
 import {DateTime} from 'luxon';
+import {SwUpdate} from '@angular/service-worker';
+import {ConfirmationService} from 'primeng/api';
 
 export interface UserLoginForm {
   email: string;
@@ -40,7 +39,7 @@ export interface UserLoginForm {
 }
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class UserEngine {
 
@@ -48,6 +47,8 @@ export class UserEngine {
   firestore = inject(Firestore)
   injector = inject(EnvironmentInjector);
   dialogService = inject(DialogService)
+  confirmService = inject(ConfirmationService)
+  swUpdate = inject(SwUpdate);
 
   $drawerToggle = signal(false);
 
@@ -276,5 +277,24 @@ export class UserEngine {
     await updateEmail(currentUser, user.email);
     await updateDoc(this.$userDocRef(), user);
     this.$refreshUser.update((val) => !val);
+  }
+
+  async checkForUpdates() {
+
+    // TODO: Add more logic to this
+    const update = this.swUpdate.isEnabled ? (await this.swUpdate.checkForUpdate()) : false;
+    console.log(update)
+    this.confirmService.confirm({
+      message: update ? 'New version available' : 'No new version available',
+      header: 'Update',
+      icon: 'pi pi-exclamation-triangle',
+      acceptLabel: update ? 'Update': "Close",
+      rejectLabel: 'Later',
+      rejectVisible: update,
+      accept: async () => {
+        await this.swUpdate.activateUpdate();
+        document.location.reload();
+      }
+    });
   }
 }
