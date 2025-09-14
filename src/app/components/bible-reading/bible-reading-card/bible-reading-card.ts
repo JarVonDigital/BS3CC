@@ -47,7 +47,7 @@ export class BibleReadingCard {
   protected readonly bibleReadingEngine = inject(BibleReadingEngine);
   protected readonly Math = Math;
 
-  $allProgress = toSignal(this.bibleReadingEngine.getProgress(), {initialValue: []})
+  $allProgress = toSignal(this.bibleReadingEngine.$progress(), {initialValue: []})
   $progress: WritableSignal<BibleReadingProgressObject | null | undefined> = signal(null);
 
   $setProgressEffect = effect(() => {

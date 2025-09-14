@@ -8,6 +8,17 @@
   <app-bible-reading-card [$header]="'Today\'s'" [$reading]="reading"></app-bible-reading-card>
 }
 
+<div class="picker">
+  <p-fluid>
+      <p-date-picker
+        size="small"
+        icon="pi pi-calendar"
+        variant="filled"
+        [showIcon]="true"
+        [inline]="true"
+        [(ngModel)]="bibleReadingEngine.$bibleReadingDropdown"></p-date-picker>
+  </p-fluid>
+</div>
 <div class="week-overview">
   @for (reading of weeklyReading; track reading.date) {
     <app-bible-reading-card [$reading]="reading"></app-bible-reading-card>

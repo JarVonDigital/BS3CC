@@ -81,7 +81,7 @@ export class UserEngine {
   );
 
   private runner = (cutoff: any) => {
-    if(!this.$signedInUser()) return of([]);
+    if (!this.$signedInUser()) return of([]);
     return runInInjectionContext(this.injector, () => {
       return collectionData(query(this.userCollection))
         .pipe(
@@ -155,7 +155,7 @@ export class UserEngine {
    * @return {Promise<Array<Object>>} A promise that resolves to an array of user data objects for users who were active after the cutoff time.
    */
   private async fetchInitial(): Promise<Array<object>> {
-    if(!this.$signedInUser()) return [] as Array<object>;
+    if (!this.$signedInUser()) return [] as Array<object>;
     return runInInjectionContext(this.injector, async () => {
       const cutoff = DateTime.utc().minus({minutes: 1}).toISO();
       const snap = await getDocs(query(this.userCollection));
@@ -243,17 +243,15 @@ export class UserEngine {
    * @return {Promise<void>} A promise that resolves when authentication is successful or logs an error if it fails.
    */
   async loginWithEmailAndPassword({email, password}: UserLoginForm): Promise<void> {
-    try {
-      await setPersistence(this.auth, browserLocalPersistence);
-      await signInWithEmailAndPassword(this.auth, email, password);
-    } catch (loginError) {
-      console.log(loginError)
-    }
+    await setPersistence(this.auth, browserLocalPersistence);
+    await signInWithEmailAndPassword(this.auth, email, password);
   }
 
   async onLogout() {
-    await this.setOffline(this.$signedInUser()!)
-    await signOut(this.auth)
+    await runInInjectionContext(this.injector, async () => {
+      await this.setOffline(this.$signedInUser()!)
+      await signOut(this.auth)
+    })
   }
 
   /**
@@ -269,7 +267,13 @@ export class UserEngine {
     await updateDoc(this.$userDocRef(), param)
   }
 
-  async updateUser(user: any) {
+  /**
+   * Updates the currently authenticated user with the provided user information.
+   *
+   * @param {Object} user - The new user data to update. Must contain the updated details such as email and profile information.
+   * @return {Promise<void>} A promise that resolves when the user update is successfully completed.
+   */
+  async updateUser(user: any): Promise<void> {
     const currentUser = this.auth.currentUser;
     if (!currentUser) return;
 
@@ -279,16 +283,23 @@ export class UserEngine {
     this.$refreshUser.update((val) => !val);
   }
 
+  /**
+   * Checks for updates to the application and provides a confirmation dialog
+   * to the user regarding the availability of updates.
+   * If an update is available and accepted, the application will activate the update
+   * and reload the page.
+   *
+   * @return {Promise<void>} A promise that resolves when the update check and any related actions are completed.
+   */
   async checkForUpdates() {
 
     // TODO: Add more logic to this
     const update = this.swUpdate.isEnabled ? (await this.swUpdate.checkForUpdate()) : false;
-    console.log(update)
     this.confirmService.confirm({
       message: update ? 'New version available' : 'No new version available',
       header: 'Update',
       icon: 'pi pi-exclamation-triangle',
-      acceptLabel: update ? 'Update': "Close",
+      acceptLabel: update ? 'Update' : "Close",
       rejectLabel: 'Later',
       rejectVisible: update,
       accept: async () => {

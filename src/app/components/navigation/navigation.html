@@ -31,8 +31,8 @@
           (click)="popover.toggle($event)"></p-avatar>
         <p-popover #popover >
           <div class="links" [style]="{display: 'flex', flexDirection: 'column', gap: '.5rem'}">
-            <p-button fluid outlined size="small" icon="pi pi-download" label="Check For Updates" (onClick)="userEngine.checkForUpdates()"></p-button>
-            <p-button fluid outlined size="small" label="Logout" (onClick)="userEngine.onLogout()"></p-button>
+            <p-button fluid outlined size="small" icon="pi pi-download" label="Check For Updates" (click)="userEngine.checkForUpdates()"></p-button>
+            <p-button fluid outlined size="small" label="Logout" (click)="userEngine.onLogout()"></p-button>
             <p-dialog></p-dialog>
           </div>
         </p-popover>

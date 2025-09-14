@@ -1,7 +1,12 @@
-import { ApplicationConfig, provideBrowserGlobalErrorListeners, provideZonelessChangeDetection, isDevMode } from '@angular/core';
-import { provideRouter } from '@angular/router';
+import {
+  ApplicationConfig,
+  provideBrowserGlobalErrorListeners,
+  provideZonelessChangeDetection,
+  isDevMode
+} from '@angular/core';
+import {provideRouter, RouteReuseStrategy} from '@angular/router';
 
-import { routes } from './app.routes';
+import {routes} from './app.routes';
 import {providePrimeNG} from 'primeng/config';
 import {provideAnimations} from '@angular/platform-browser/animations';
 import {environment} from '../environments/environment';
@@ -11,9 +16,10 @@ import {getFirestore, provideFirestore} from '@angular/fire/firestore';
 import {LogLevel, setLogLevel} from '@angular/fire';
 import {getStorage, provideStorage} from '@angular/fire/storage';
 import {DialogService} from 'primeng/dynamicdialog';
-import { provideServiceWorker } from '@angular/service-worker';
+import {provideServiceWorker} from '@angular/service-worker';
 import {MyTheme} from './theme/theme';
 import {ConfirmationService} from 'primeng/api';
+import {CustomReuseStrategy} from './route-reuse-strategy';
 
 setLogLevel(LogLevel.VERBOSE);
 
@@ -21,6 +27,7 @@ export const appConfig: ApplicationConfig = {
   providers: [
     DialogService,
     ConfirmationService,
+    { provide: RouteReuseStrategy, useClass: CustomReuseStrategy },
     provideBrowserGlobalErrorListeners(),
     provideRouter(routes),
     provideAnimations(),
@@ -35,12 +42,14 @@ export const appConfig: ApplicationConfig = {
           darkModeSelector: false,
         }
       }
-    }), provideServiceWorker('ngsw-worker.js', {
-            enabled: !isDevMode(),
-            registrationStrategy: 'registerWhenStable:30000'
-          }), provideServiceWorker('ngsw-worker.js', {
-            enabled: !isDevMode(),
-            registrationStrategy: 'registerWhenStable:30000'
-          })
+    }),
+    provideServiceWorker('ngsw-worker.js', {
+      enabled: !isDevMode(),
+      registrationStrategy: 'registerWhenStable:30000'
+    }),
+    provideServiceWorker('ngsw-worker.js', {
+      enabled: !isDevMode(),
+      registrationStrategy: 'registerWhenStable:30000'
+    })
   ]
 };

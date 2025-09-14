@@ -9,6 +9,9 @@ import {UserProfile} from '../user/user-profile/user-profile';
 import {DatePicker} from 'primeng/datepicker';
 import {DateTime} from 'luxon';
 import {Gems} from '../community-gems/gems/gems';
+import {Fluid} from 'primeng/fluid';
+import {FormsModule} from '@angular/forms';
+import {FloatLabel} from 'primeng/floatlabel';
 
 @Component({
   selector: 'app-bible-reading',
@@ -20,7 +23,10 @@ import {Gems} from '../community-gems/gems/gems';
     BibleReadingCard,
     UserProfile,
     DatePicker,
-    Gems
+    Gems,
+    Fluid,
+    FormsModule,
+    FloatLabel
   ],
   templateUrl: './bible-reading.html',
   styleUrl: './bible-reading.scss'

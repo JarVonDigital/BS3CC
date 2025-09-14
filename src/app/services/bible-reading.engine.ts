@@ -73,11 +73,9 @@ export class BibleReadingEngine {
 
   $currentDate = signal(DateTime.now());
   $bibleReadingStartDate = signal(DateTime.fromISO('2025-09-08').startOf('day'));
+  $bibleReadingDropdown: WritableSignal<Date> = signal(this.$currentDate().toJSDate());
 
   $bibleBooks: WritableSignal<BibleBooks[]> = signal([] as BibleBooks[]);
-  $bibleBookEffect = effect(() => {
-
-  })
 
   $bibleReadingSchedules: WritableSignal<BibleReadingScheduleRef[]> = signal([]);
   $bibleReadingSchedule: Signal<BibleReadingRef[]> = computed(() => {
@@ -100,10 +98,31 @@ export class BibleReadingEngine {
   })
 
   $weeklyReadingSchedule = computed(() => {
-    if (this.$currentDate() > this.$bibleReadingStartDate()) {
+    if (this.$currentDate() < this.$bibleReadingStartDate()) {
       return this.$bibleReadingSchedule().filter(r => r.day <= 7)
     }
-    return this.$bibleReadingSchedule().filter(r => r?.date >= this.$currentDate().startOf("week") && r.date <= this.$currentDate().endOf("week"))
+
+    // Construct Date
+    const sDate = DateTime.fromJSDate(this.$bibleReadingDropdown()).startOf('week');
+    const eDate = sDate.plus({day: 7})
+    return this.$bibleReadingSchedule().filter(r => r.date >= sDate && r.date < eDate)
+  })
+
+  /**
+   * A computed property that tracks the progress of the currently signed-in user.
+   * It depends on the signed-in user and dynamically updates based on the user's progress data.
+   *
+   * The value of this property is computed by invoking the `getProgress` method,
+   * which retrieves the relevant progress information, after ensuring the active user
+   * is obtained through `$signedInUser`.
+   *
+   * Note:
+   * - This property is reactive to changes in the state of the signed-in user.
+   * - Ensure `this.getProgress` is properly implemented to return valid progress data.
+   */
+  $progress = computed(() => {
+    if(this.user.$signedInUser()) return this.getProgress();
+    return of([] as BibleReadingProgressObject[]);
   })
 
   constructor() {
