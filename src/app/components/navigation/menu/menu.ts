@@ -1,4 +1,4 @@
-import {Component, inject, input} from '@angular/core';
+import {Component, effect, inject, input, InputSignal, signal} from '@angular/core';
 import {RouterLink, RouterLinkActive} from "@angular/router";
 import {MegaMenuItem} from 'primeng/api';
 import {Drawer} from 'primeng/drawer';
@@ -14,26 +14,39 @@ import {UserEngine} from '../../../services/user.engine';
   styleUrl: './menu.scss'
 })
 export class Menu {
-  drawerRef = input.required<Drawer>()
+  $orientation = input<'horizontal' | 'vertical'>('vertical')
+  $orientationEffect = effect(() => {
+    this.menuItems.set([
+      {
+        icon: 'pi pi-book',
+        label: this.orient('Bible Reading Schedule', 'Reading'),
+        routerLink: ['/'],
+        routerLinkActiveOptions: {exact: true}
+      },
+      {
+        icon: 'pi pi-trophy',
+        label: this.orient('Community Gems', 'Gems'),
+        routerLink: ['/gems'],
+        routerLinkActiveOptions: {exact: true}
+      },
+      {
+        icon: 'pi pi-calendar-plus',
+        label: this.orient('Schedule Creator', 'Schedule'),
+        routerLink: ['/schedule'],
+        routerLinkActiveOptions: {exact: true}
+      },
+      {
+        icon: 'pi pi-cog',
+        label: this.orient('Settings', 'Settings'),
+        command: () => this.userEngine.openSettingsDialog(),
+        routerLinkActiveOptions: {exact: true}
+      }
+    ])
+  })
   userEngine = inject(UserEngine)
-  menuItems: MegaMenuItem[] = [
-    {
-      icon: 'pi pi-book',
-      label: 'Bible Reading Schedule',
-      routerLink: ['/'],
-      routerLinkActiveOptions: {exact: true}
-    },
-    {
-      icon: 'pi pi-trophy',
-      label: 'Community Gems',
-      routerLink: ['/gems'],
-      routerLinkActiveOptions: {exact: true}
-    },
-    {
-      icon: 'pi pi-calendar-plus',
-      label: 'Schedule Creator',
-      routerLink: ['/schedule'],
-      routerLinkActiveOptions: {exact: true}
-    }
-  ]
+  menuItems = signal([] as MegaMenuItem[])
+
+  orient(vertical: any, horizontal: any) {
+    return this.$orientation() === 'vertical' ? vertical : horizontal;
+  }
 }

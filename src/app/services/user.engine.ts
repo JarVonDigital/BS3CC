@@ -147,10 +147,6 @@ export class UserEngine {
     })
   })
 
-  constructor() {
-
-  }
-
   /**
    * Fetches the initial set of user data based on a specific cutoff time.
    * Filters out users who were last active before the cutoff.
@@ -210,6 +206,7 @@ export class UserEngine {
 
   openSettingsDialog() {
     this.dialogService.open(Settings, {
+      appendTo: 'body',
       header: 'Settings',
       closable: true,
       modal: true,

@@ -1,4 +1,6 @@
 :host {
+  flex: 1;
+
   .navigation {
     display: flex;
     flex-direction: column;
@@ -19,6 +21,36 @@
         i {
           color: var(--p-primary-700);
           font-weight: 800;
+        }
+      }
+    }
+
+    &.horizontal {
+      flex: 1;
+      flex-direction: row;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+      border-top: 1px solid var(--p-primary-50);
+
+      li {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+        text-align: center;
+        gap: .3rem;
+        padding: 0;
+        height: inherit;
+
+        &.active {
+          background: unset;
+        }
+
+        h4 {
+          flex: none;
+          font-size: .6rem;
         }
       }
     }

@@ -9,13 +9,7 @@
 }
 
 <div class="week-overview">
-  <div class="sticky">
-    <p-button rounded outlined icon="pi pi-arrow-right"></p-button>
-  </div>
-
   @for (reading of weeklyReading; track reading.date) {
     <app-bible-reading-card [$reading]="reading"></app-bible-reading-card>
   }
-
-  <p-button rounded outlined icon="pi pi-arrow-left"></p-button>
 </div>

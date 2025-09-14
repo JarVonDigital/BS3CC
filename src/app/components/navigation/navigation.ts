@@ -1,4 +1,4 @@
-import {Component, inject, signal} from '@angular/core';
+import {Component, inject, input, InputSignal, signal, WritableSignal} from '@angular/core';
 import {DatePipe} from "@angular/common";
 import {Menubar} from "primeng/menubar";
 import {BibleReadingEngine} from '../../services/bible-reading.engine';
@@ -24,16 +24,13 @@ import {Menu} from './menu/menu';
     Popover,
     Login,
     Drawer,
-    MegaMenu,
-    Fluid,
-    RouterLink,
-    RouterLinkActive,
     Menu
   ],
   templateUrl: './navigation.html',
   styleUrl: './navigation.scss'
 })
 export class Navigation {
+  $style: InputSignal<'withTop' | 'withBottom' | 'withSide'> = input<'withTop' | 'withBottom' | 'withSide'>("withSide")
   protected readonly userEngine = inject(UserEngine);
   protected readonly bibleReadingEngine = inject(BibleReadingEngine);
 

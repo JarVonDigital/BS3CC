@@ -3,6 +3,7 @@ import {BibleReading} from './components/bible-reading/bible-reading';
 import {bibleReadingResolver} from './resolvers/bible-reading-resolver';
 import {CommunityGems} from './components/community-gems/community-gems';
 import {ScheduleCreator} from './components/schedule/schedule-creator/schedule-creator';
+import {Settings} from './components/user/settings/settings';
 
 export const routes: Routes = [
   {
@@ -22,5 +23,10 @@ export const routes: Routes = [
     path: 'schedule',
     component: ScheduleCreator,
     resolve: {bibleReading: bibleReadingResolver}
+  },
+  {
+    title: "BS3CC | Settings",
+    path: 'settings',
+    component: Settings,
   }
 ];
