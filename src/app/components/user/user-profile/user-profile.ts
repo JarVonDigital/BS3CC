@@ -1,4 +1,4 @@
-import {Component, computed, inject, input, signal} from '@angular/core';
+import {Component, computed, inject, input, Signal, signal} from '@angular/core';
 import { Avatar } from 'primeng/avatar';
 import { UserEngine } from '../../../services/user.engine';
 import { AvatarGroup } from 'primeng/avatargroup';
@@ -21,7 +21,6 @@ import {Button} from 'primeng/button';
     DatePipe,
     Tooltip,
     ProgressSpinner,
-    Message,
     Button,
   ],
   templateUrl: './user-profile.html',
@@ -34,10 +33,10 @@ export class UserProfile {
   userEngine: UserEngine = inject(UserEngine);
   $users = toSignal(this.userEngine.getUsers());
   $progress = toSignal(this.bibleReadingEngine.getUserProgress('COMPLETE'))
-  $completed = computed(() => {
+  $completed: Signal<number> = computed(() => {
     return this.$progress()?.length ?? 0;
   })
-  $totalProgress = computed(() => {
+  $totalProgress: Signal<number> = computed(() => {
     return this.bibleReadingEngine.$bibleReadingSchedule().flatMap(s => s.reading).length ?? 0
   })
   $isUpdatingAvatar = signal(false)
@@ -93,5 +92,12 @@ export class UserProfile {
       return email.split('@')[0];
     }
     return "";
+  }
+
+  protected readonly Math = Math
+
+  getPercentageComplete() {
+    const percent: number = (this.$completed() / this.$totalProgress()) * 100;
+    return parseFloat(percent.toFixed(1))
   }
 }

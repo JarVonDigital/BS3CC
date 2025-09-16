@@ -5,7 +5,7 @@ import {
   inject,
   Injectable,
   runInInjectionContext, signal,
-  Signal,
+  Signal, untracked,
 } from '@angular/core';
 import {
   Auth,
@@ -80,6 +80,18 @@ export class UserEngine {
     map(() => DateTime.now().minus({minute: 1}).toISO()) // 2 min cutoff
   );
 
+  /**
+   * Filters and retrieves a collection of users who were active after the specified cutoff date.
+   *
+   * This function evaluates whether the currently signed-in user exists and, if so, fetches
+   * data from the `userCollection`. It then applies a filter to return only those users
+   * whose "lastActive" date is after the provided "cutoff" date.
+   *
+   * @param {any} cutoff - The date-time threshold, in ISO format, used to filter users.
+   *                        Users are included if their "lastActive" date is more recent than this value.
+   * @returns {Observable<any[]>} An observable emitting an array of filtered user objects,
+   *                              or an empty array if there is no signed-in user.
+   */
   private runner = (cutoff: any) => {
     if (!this.$signedInUser()) return of([]);
     return runInInjectionContext(this.injector, () => {
@@ -135,9 +147,10 @@ export class UserEngine {
     await runInInjectionContext(this.injector, async () => {
       const user = this.$signedInUser();
       if (!user) return;
-      const docData = await getDoc(this.$userDocRef());
+      const userDoc = untracked(this.$userDocRef)
+      const docData = await getDoc(userDoc);
       if (!docData.exists()) {
-        await setDoc(this.$userDocRef(), {
+        await setDoc(userDoc, {
           uid: user.uid,
           photoURL: user.photoURL,
           firstName: '',
@@ -247,7 +260,13 @@ export class UserEngine {
     await signInWithEmailAndPassword(this.auth, email, password);
   }
 
-  async onLogout() {
+  /**
+   * Handles the user logout process by setting the user offline
+   * and signing out from the authentication service.
+   *
+   * @return {Promise<void>} A promise that resolves once the logout process is completed.
+   */
+  async onLogout(): Promise<void> {
     await runInInjectionContext(this.injector, async () => {
       await this.setOffline(this.$signedInUser()!)
       await signOut(this.auth)
