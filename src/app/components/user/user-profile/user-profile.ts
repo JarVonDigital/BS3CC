@@ -11,6 +11,7 @@ import {ProgressSpinner} from 'primeng/progressspinner';
 import {Message} from 'primeng/message';
 import {BibleReadingEngine} from '../../../services/bible-reading.engine';
 import {Button} from 'primeng/button';
+import {Fluid} from 'primeng/fluid';
 
 @Component({
   selector: 'app-user-profile',
@@ -22,6 +23,8 @@ import {Button} from 'primeng/button';
     Tooltip,
     ProgressSpinner,
     Button,
+    Message,
+    Fluid,
   ],
   templateUrl: './user-profile.html',
   styleUrl: './user-profile.scss'
